@@ -1,8 +1,8 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAME HERE"
+title: "Instructions_MS2-workflow_robot"
+author: "Muyao Xi"
 date: "`r Sys.Date()`"
-site: bookdown::bookdown_site
+site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow_robot/"
 ---
 
 # Down the rabbit-hole
