@@ -1,2 +1,326 @@
 # MS2 preprocessing untargeted
+## XCMS
+   The script `2a.Pipeline_XCMS.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+
+
+
+
+### Source paths on the server
+```{r}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+   
+   
+   
+## Path of storing .mzML files (must have transferred by OpenMS) 🕵 
+```{r eval=FALSE}
+path_files_mzML <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
+```
+
+   
+  
+
+## Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+   
+   
+   
+### Parameters for preprocessing 🕵
+#### Filter the compounds eluted too early and too late 🕵
+```{r eval=FALSE}
+rt_range <- c(0.5, 15)*60 
+```
+
+   
+   
+#### Peak picking 🕵
+```{r eval=FALSE}
+    params <- list()
+   
+    params$CentWave <- CentWaveParam( ppm = 20,
+                                      peakwidth =  c(0.05,0.2)*60,
+                                      snthresh = 5,
+                                      noise = 1500,
+                                      prefilter = c(3,1500),
+                                      integrate = 2,
+                                      mzdiff = -0.001,
+                                      verboseColumns = TRUE,
+                                      fitgauss = TRUE,
+                                      extendLengthMSW = TRUE
+    )
+```
+
+    
+   
+#### Grouping for alignment 🕵
+```{r eval=FALSE}
+    params$group1 <- PeakDensityParam( sampleGroups = rep(1, length(list.files(path_files_mzML))),
+                                       binSize = 0.01,
+                                       bw = 2,
+                                       minSamples = 1,
+                                       minFraction = 0.3,
+                                       maxFeatures = 20
+    )
+```
+
+   
+   
+#### Alignment 🕵
+```{r eval=FALSE}
+    params$PeakAlign <- PeakGroupsParam(  smooth = "loess",
+                                          span = 0.6,
+                                          minFraction    = 0.8,
+                                          family = "gaussian",
+                                          extraPeaks = 3
+                                          #subset = 
+    )
+```
+
+   
+   
+#### Grouping again with stricter condition after alignment 🕵
+```{r eval=FALSE}
+    params$group2 <- PeakDensityParam( sampleGroups = rep(1, length(list.files(path_files_mzML))),
+                                       binSize = 0.01,
+                                       bw = 1.8,
+                                       minSamples = 1,
+                                       minFraction = 0.6,
+                                       maxFeatures = 20
+    )
+```
+
+   
+   
+#### Gap filling 🕵
+```{r eval=FALSE}
+    params$FillChromPeaksParam <- FillChromPeaksParam(expandMz = 0, 
+                                                      expandRt = 0, 
+                                                      ppm = 30)
+   
+```
+
+   
+   
+#### Conducting XCMS
+```{r eval=FALSE}
+    raw <- readMSData(list.files(path_files_mzML, full.names = TRUE), 
+                      mode = "onDisk")
+   
+   
+   
+    if (grepl("ku_00007", path_files_mzML)) {
+     
+      source("")
+     
+    } else {source(paste0(path_utils_prepro, "/XCMS.R"))}
+```
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+## Extraction of MS2-spectra
+   The script `3a.Pipeline_extract_MS2.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+   
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide the polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS" #or "NEG"
+```
+
+
+
+### Path of XCMSnExp object after conducting XCMS 🕵
+```{r eval=FALSE}
+path_rds_xcms_XCMSnExp <- "H:/From_SUND/Scripts/outputs/xcms_XCMSnExp_POS.rds" 
+```
+
+
+   
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+ 
+   
+### Parameters for extracting MS2 spectra 🕵
+#### Extraction: Threshold of rt and m/z for extraction and what type of object return 🕵
+```{r eval=FALSE}
+params <- list()
+params$expandRt <- 15
+params$expandMz <- 0.01
+params$return.type <- "Spectra"  #"MSpectra", "list", "List"
+```
+
+   
+   
+### Combining: Threshold of mz, proportion among all samples, type for combining, function for combining mz and intensity 🕵
+```{r eval=FALSE}
+# for getting consensus spectra for each feature at each collision energy
+params$tolerance <- 0.005
+params$peaks <- "intersect"  #"union" #report all peaks from all input spectra 
+params$minProp <- 0.7
+params$intfun <- median
+params$mzfun <- median
+```
+
+   
+   
+### (Optional but recommended) Plot the MS2 spectra ✈️
+<div class="Keats_red"> If not, please do not run this line </div>
+```{r eval=FALSE}
+plot_pdf <- "TRUE"
+```
+
+   
+   
+### (Optional but reconmended) Reduce the number of the MS2 spectra ✈️
+<div class="Keats_red"> If not, please do not run these two lines </div>
+```{r eval=FALSE}
+npeaks_reduce <- "TRUE"
+npeaks_remaining <- 60
+```
+
+
+
+   
+### Conduct the extraction of MS2 spectra 
+```{r eval=FALSE}
+if (grepl("ku_00007", path_rds_xcms_XCMSnExp)) {
+     
+     source("")
+     
+} else {source(paste0(path_utils_prepro, "/extract_MS2.R"))}
+```
+
+
+   
+   
+
+
+
+
+
+## (Optional) CAMERA
+<font color = "red">If you would like to get more information related to adduct, please run these lines, but you have to have at least 3 samples</font>
+
+   The script `4.(optional)Pipeline_CAMERA.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+   
+   
+   
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+
+### Provide the polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+  
+
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+   
+### Read XCMSnExp object after conducting XCMS 🕵
+```{r eval=FALSE}
+path_rds_xcms_XCMSnExp <- "H:/From_SUND/Scripts/outputs/xcms_XCMSnExp_POS.rds" 
+```
+
+ 
+### Parameters for CAMERA 🕵
+#### Grouping 🕵
+```{r eval=FALSE}
+params <- list()
+params$perfwhm <- 0.6          #percentage of the width of the FWHM (full width at half maximum) of the peak
+params$group_intval <- "into"  #the type of intensity value
+params$sigma <- 6              #multiplier of the standard deviation
+```
+
+   
+   
+#### correlation 🕵
+```{r eval=FALSE}
+params$calcIso <- FALSE      #include isotope detection information for graph clustering
+params$calcCiS <- FALSE      #calculate correlation inside samples
+params$calsCaS <- TRUE       #calculate correlation across samples
+params$cor_eic_th <- 0.7     #correlation threshold for RIC correlation
+params$cor_exp_th <- 0.3     #threshold for intensity correlations across samples
+params$pval <- 1E-6          #p-value threshold for testing correlation of significance
+params$graphMethod <- "lpc"  #clustering method for resulting correlation graph
+params$intval_cor <- "into"  #selection of the intensity values
+```
+
+   
+   
+#### find isotopes 🕵
+```{r eval=FALSE}
+params$find_isoto_ppm <- 10         #threshold for m/z
+params$mzabs <- 0.01                #allowed variance for the search
+params$find_isoto_intval <- "into"  #choose intensity values for C12/C13 check
+```
+
+   
+   
+   
+#### find adducts 🕵
+```{r eval=FALSE}
+params$find_addu_ppm <- 10    
+params$mzabs <- 0.01
+params$multiplier <- 4         #highest number(n) of allowed clusterion [nM+ion]
+   
+```
+
+
+   
+### Conduct CAMERA
+```{r eval=FALSE}
+if (grepl("ku_00007", path_rds_xcms_XCMSnExp)) {
+     
+     source("")
+     
+} else {source(paste0(path_utils_prepro, "/CAMERA.R"))}
+     
+```
+
+    
+
+
+  
+   
+
 

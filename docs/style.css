@@ -12,3 +12,34 @@ pre {
 pre code {
   white-space: inherit;
 }
+
+
+/* Headers */
+h1{
+  font-size: 16pt;
+}
+h2{
+  font-size: 14pt;
+}
+h3{
+  font-size: 12pt;
+}
+h4{
+  font-size: 10pt;
+}
+
+.Keats {
+    font-family: "Times New Roman", Times, Serif;
+    font-style: italic;
+    font-size: 9pt;
+    margin-left: 30px;
+}
+
+.Keats_red {
+    font-family: "Times New Roman", Times, Serif;
+    font-style: italic;
+    font-size: 9pt;
+    color: red;
+    margin-left: 30px;
+}
+

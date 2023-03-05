@@ -5,5 +5,16 @@ date: "`r Sys.Date()`"
 site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow_robot/"
 ---
 
-# Down the rabbit-hole
+# Prerequisites 
 
+1. Download **OpenMS** for converting the format of MS2-files (<a href="https://sourceforge.net/projects/open-ms/" target="blank">link for downloading OpenMS</a>)
+
+2. Export MS2-files as .mzML from $dataanalysis$
+
+3. In order to install all essential packages, please run script **set_up_enviroment.R** under the folder of **J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\utils\\utils_MS2_set_up** before doing any step
+
+4. If you would like to use tools on GNPS, please register for your personal username and password
+
+5. You should replace the context with yours under the section with 🕵️
+
+6. You could select whether run the section with ✈️

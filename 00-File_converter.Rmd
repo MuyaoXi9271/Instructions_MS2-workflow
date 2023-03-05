@@ -1,0 +1,74 @@
+# File converter
+
+The script `1.Pipeline_extension_format_converter.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules` 
+
+
+
+## Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+## Specify the polarity 🕵
+<div class="Keats"> options : "POS", "NEG", "c("POS", "NEG")" </div>
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+  
+
+## Path of application of openms 🕵
+```{r eval=FALSE}
+path_openms <- "C:/Program Files/OpenMS-2.8.0/bin"
+```
+
+  
+    
+    
+## Path of storing files (.mzML) exported from dataanalysis for each polarity 🕵
+```{r eval=FALSE}
+path_files_from_DA <- "H:/From_SUND/Scripts/test/MS2pos_untarget"
+```
+
+    
+    
+
+
+
+
+## Conduct
+### Add extension (if not available) to files exported from dataanalysis
+```{r eval=FALSE}
+files_from_DA <- list.files(path_files_from_DA, full.names = TRUE)
+id_not_ext <- setdiff(1:length(files_from_DA), 
+                      grep("\\.mzML$|\\.d$", basename(files_from_DA)))
+    
+if (length(id_not_ext) != 0) {
+  
+
+  file.rename(files_from_DA[id_not_ext],
+              paste0(files_from_DA[id_not_ext], ".mzML")
+             )
+}
+    
+```
+
+    
+    
+    
+### File converter for adapting to run XCMS
+```{r eval=FALSE}
+source(paste0(path_func, "/file-conversion.R"))
+
+#Create a sibling folder for storing files from openms
+path_files_from_openms <- paste0(dirname(path_files_from_DA), "/mzML_openms_MS2_", polarity)
+if (!dir.exists(file.path(path_files_from_openms))) dir.create(path_files_from_openms, showWarnings = FALSE, recursive = TRUE)
+
+#conduct converting  
+mapply(function(x, y) file_conversion(x,y, path_openms, ".mzML", ".mzML"), path_files_from_openms, path_files_from_DA)
+```
+
+    
+    

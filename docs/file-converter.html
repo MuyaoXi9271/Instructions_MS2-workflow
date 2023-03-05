@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Instructions_MS2-workflow_robot</title>
-  <meta name="description" content="Instructions_MS2-workflow_robot" />
+  <title>Chapter 2 File converter | Instructions_MS2-workflow_robot</title>
+  <meta name="description" content="Chapter 2 File converter | Instructions_MS2-workflow_robot" />
   <meta name="generator" content="bookdown 0.32 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Instructions_MS2-workflow_robot" />
+  <meta property="og:title" content="Chapter 2 File converter | Instructions_MS2-workflow_robot" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Instructions_MS2-workflow_robot" />
+  <meta name="twitter:title" content="Chapter 2 File converter | Instructions_MS2-workflow_robot" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="file-converter.html"/>
+<link rel="prev" href="index.html"/>
+<link rel="next" href="ms2-preprocessing-untargeted.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -202,30 +202,61 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Instructions_MS2-workflow_robot</h1>
-<p class="author"><em>Muyao Xi</em></p>
-<p class="date"><em>2023-03-03</em></p>
+<div id="file-converter" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> File converter<a href="file-converter.html#file-converter" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The script <code>1.Pipeline_extension_format_converter.R</code> is available under the folder of <code>J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules</code></p>
+<div id="source-paths-on-the-server" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Source paths on the server<a href="file-converter.html#source-paths-on-the-server" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="file-converter.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R&quot;</span>)</span></code></pre></div>
 </div>
-<div id="prerequisites" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> Prerequisites<a href="index.html#prerequisites" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<ol style="list-style-type: decimal">
-<li><p>Download <strong>OpenMS</strong> for converting the format of MS2-files (<a href="https://sourceforge.net/projects/open-ms/" target="blank">link for downloading OpenMS</a>)</p></li>
-<li><p>Export MS2-files as .mzML from <span class="math inline">\(dataanalysis\)</span></p></li>
-<li><p>In order to install all essential packages, please run script <strong>set_up_enviroment.R</strong> under the folder of <strong>J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_set_up</strong> before doing any step</p></li>
-<li><p>If you would like to use tools on GNPS, please register for your personal username and password</p></li>
-<li><p>You should replace the context with yours under the section with 🕵️</p></li>
-<li><p>You could select whether run the section with ✈️</p></li>
-</ol>
+<div id="specify-the-polarity" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Specify the polarity 🕵<a href="#specify-the-polarity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="Keats">
+options : “POS”, “NEG”, “c(”POS”, “NEG”)”
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="file-converter.html#cb2-1" aria-hidden="true" tabindex="-1"></a>  polarity <span class="ot">&lt;-</span> <span class="st">&quot;POS&quot;</span></span></code></pre></div>
+</div>
+<div id="path-of-application-of-openms" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Path of application of openms 🕵<a href="#path-of-application-of-openms" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="file-converter.html#cb3-1" aria-hidden="true" tabindex="-1"></a>   path_openms <span class="ot">&lt;-</span> <span class="st">&quot;C:/Program Files/OpenMS-2.8.0/bin&quot;</span></span></code></pre></div>
+</div>
+<div id="path-of-storing-files-.mzml-exported-from-dataanalysis-for-each-polarity" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Path of storing files (.mzML) exported from dataanalysis for each polarity 🕵<a href="#path-of-storing-files-.mzml-exported-from-dataanalysis-for-each-polarity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="file-converter.html#cb4-1" aria-hidden="true" tabindex="-1"></a>   path_files_from_DA <span class="ot">&lt;-</span> <span class="st">&quot;H:/From_SUND/Scripts/test/MS2pos_untarget&quot;</span></span></code></pre></div>
+</div>
+<div id="conduct" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Conduct<a href="file-converter.html#conduct" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="add-extension-if-not-available-to-files-exported-from-dataanalysis" class="section level3 hasAnchor" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Add extension (if not available) to files exported from dataanalysis<a href="file-converter.html#add-extension-if-not-available-to-files-exported-from-dataanalysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="file-converter.html#cb5-1" aria-hidden="true" tabindex="-1"></a>   files_from_DA <span class="ot">&lt;-</span> <span class="fu">list.files</span>(path_files_from_DA, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-2"><a href="file-converter.html#cb5-2" aria-hidden="true" tabindex="-1"></a>   id_not_ext <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(files_from_DA), </span>
+<span id="cb5-3"><a href="file-converter.html#cb5-3" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">grep</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">.mzML$|</span><span class="sc">\\</span><span class="st">.d$&quot;</span>, <span class="fu">basename</span>(files_from_DA)))</span>
+<span id="cb5-4"><a href="file-converter.html#cb5-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-5"><a href="file-converter.html#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="cf">if</span> (<span class="fu">length</span>(id_not_ext) <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb5-6"><a href="file-converter.html#cb5-6" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-7"><a href="file-converter.html#cb5-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">file.rename</span>(files_from_DA[id_not_ext],</span>
+<span id="cb5-8"><a href="file-converter.html#cb5-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">paste0</span>(files_from_DA[id_not_ext], <span class="st">&quot;.mzML&quot;</span>)</span>
+<span id="cb5-9"><a href="file-converter.html#cb5-9" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb5-10"><a href="file-converter.html#cb5-10" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-11"><a href="file-converter.html#cb5-11" aria-hidden="true" tabindex="-1"></a>     }</span></code></pre></div>
+</div>
+<div id="file-converter-for-adapting-to-run-xcms" class="section level3 hasAnchor" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> File converter for adapting to run XCMS<a href="file-converter.html#file-converter-for-adapting-to-run-xcms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="file-converter.html#cb6-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">source</span>(<span class="fu">paste0</span>(path_func, <span class="st">&quot;/file-conversion.R&quot;</span>))</span>
+<span id="cb6-2"><a href="file-converter.html#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Create a new folder under the provided folder</span></span>
+<span id="cb6-3"><a href="file-converter.html#cb6-3" aria-hidden="true" tabindex="-1"></a>    path_mzML_openms <span class="ot">&lt;-</span> <span class="fu">paste0</span>(path_files_from_DA, <span class="st">&quot;/mzML_openms_MS2_&quot;</span>, polarity)</span>
+<span id="cb6-4"><a href="file-converter.html#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mapply</span>(<span class="cf">function</span>(x, y) <span class="fu">file_conversion</span>(x,y, path_openms, <span class="st">&quot;.mzML&quot;</span>, <span class="st">&quot;.mzML&quot;</span>), path_mzML_openms, path_files_from_DA)</span></code></pre></div>
 
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="file-converter.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="ms2-preprocessing-untargeted.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -256,7 +287,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/MuyaoXi9271/Instructions_MS2-workflow_robot/edit/master/index.Rmd",
+"link": "https://github.com/MuyaoXi9271/Instructions_MS2-workflow_robot/edit/master/00-File_converter.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -264,7 +295,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/MuyaoXi9271/Instructions_MS2-workflow_robot/blob/master/index.Rmd",
+"link": "https://github.com/MuyaoXi9271/Instructions_MS2-workflow_robot/blob/master/00-File_converter.Rmd",
 "text": null
 },
 "download": null,
