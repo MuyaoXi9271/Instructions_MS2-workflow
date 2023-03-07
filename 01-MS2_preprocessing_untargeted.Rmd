@@ -228,7 +228,7 @@ if (grepl("ku_00007", path_rds_xcms_XCMSnExp)) {
 
 
 ## (Optional) CAMERA
-<font color = "red">If you would like to get more information related to adduct, please run these lines, but you have to have at least 3 samples</font>
+<font color = "red">If you would like to get more information related to adduct, please run these lines, but you have to have at least 6 samples</font>
 
    The script `4.(optional)Pipeline_CAMERA.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
    
@@ -281,7 +281,7 @@ params$calsCaS <- TRUE       #calculate correlation across samples
 params$cor_eic_th <- 0.7     #correlation threshold for RIC correlation
 params$cor_exp_th <- 0.3     #threshold for intensity correlations across samples
 params$pval <- 1E-6          #p-value threshold for testing correlation of significance
-params$graphMethod <- "lpc"  #clustering method for resulting correlation graph
+params$graphMethod <- "lpc"  #clustering method for resulting correlation graph (hcs, lpc)
 params$intval_cor <- "into"  #selection of the intensity values
 ```
 
