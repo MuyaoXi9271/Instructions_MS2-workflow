@@ -5,6 +5,6 @@ bookdown::gitbook:
     toc:
       collapse: section
       before: |
-        <li><a href="./">Instructions_MS2-workflow_robot</a></li>
+        <li><a href="./">Instructions_MS2-workflow</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>

@@ -6,7 +6,7 @@
 
 
 ### Source paths on the server
-```{r}
+```{r eval=FALSE}
 source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
 ```
 
@@ -20,7 +20,7 @@ polarity <- "POS"
    
    
    
-## Path of storing .mzML files (must have transferred by OpenMS) 🕵 
+### Path of storing .mzML files (must have transferred by OpenMS) 🕵 
 ```{r eval=FALSE}
 path_files_mzML <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
 ```
@@ -28,7 +28,7 @@ path_files_mzML <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
    
   
 
-## Path of storing outputs 🕵
+### Path of storing outputs 🕵
 ```{r eval=FALSE}
 path_outputs <- "H:/From_SUND/Scripts/outputs"
 ```

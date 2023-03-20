@@ -1,0 +1,57 @@
+# Small tools
+This chapter consists of: 
+
+1. Among compound name, PubChem id (cid), KEEG id, HMDB, CAS, if you have any one as identifier, you will get thr rest of them and corresponding chemical properties related to this compound
+
+
+
+## Play with various ids
+The script `DBs_ids_properties.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules`
+
+
+### Provide identifier for grabbing other information 🕵
+<font color = "red">You have to choose one from these 4 options **("Name", "KEGG", "CAS", "HMDB")**</font>
+```{r eval=FALSE}
+identifier <- "KEGG" 
+```
+
+
+
+### Provide filename and sheetname for searching other information 🕵
+absolute path
+```{r eval=FALSE}
+filename_xlsx <- "H:/From_SUND/Scripts/test/test_DB_ids.xlsx"
+sheetname <- ""
+```
+
+
+### Provide the column name of identifier 🕵 
+```{r eval=FALSE}
+col_name <- "KEGG"
+```
+
+
+### What properties you would like to get 🕵
+You could find other options from function `get_info_based_cid_to_xlsx.R` under the folder of containing functions
+```{r eval=FALSE}
+properties <- c("IUPACName", "InChIKey", "CanonicalSMILES", "MonoisotopicMass")
+```
+
+
+### Provide the path for containing output 🕵
+```{r eval=FALSE}
+path_output <- "H:/From_SUND/Scripts/test/outputs"
+```
+
+
+### Conduct 
+```{r eval=FALSE}
+source(paste0(path_utils_DBs_api, "/DBs_api.R"))
+
+```
+
+
+
+
+
+      
