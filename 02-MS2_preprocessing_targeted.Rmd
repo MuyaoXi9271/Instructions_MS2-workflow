@@ -1,5 +1,5 @@
 # MS2 preprocessing targeted
-Please copy the template of excel file (**J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\utils\\utils_MS2_preprocessing\\LCMS_library_template.xlsx**) and fill in the information related to the standards which you would like to preprocess. You must fill the columns in <font color = "red">red color</font>
+Please copy the template of excel file which fits your data `LCMS_library_template1.xlsx` or `LCMS_library_template2.xlsx` under the forlder `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_preprocessing\LCMS_library_template.xlsx` and fill in the information related to the standards which you would like to preprocess. You must fill the columns with the column name in and regarding the filenames, they are without extension<font color = "red">red color</font>
 
 
 
@@ -38,14 +38,15 @@ path_outputs <- "H:/From_SUND/Scripts/outputs"
 
 
 
-### Filename for containing information of standards including absolute path (Please fill in the provided template) 🕵
+### Filename for containing information of standards including absolute path (Please fill in the provided template) as well as the sheet name 🕵
 ```{r eval=FALSE}
 xlsx_std_info <- "H:/From_SUND/Projects/MP163/0220/INFO/LCMS_library_template.xlsx"
+xlsx_std_sheetname <- "compound_table"
 ```
    
    
    
-#5.colname of retention time 🕵
+### Colname of retention time 🕵
 ```{r eval=FALSE}
 colname_rt <- "Library.rt.RF" # or "Library.rt.HILLIC"
 ```
@@ -53,7 +54,7 @@ colname_rt <- "Library.rt.RF" # or "Library.rt.HILLIC"
     
 
    
-#5.Parameters for getting chromatogram 🕵
+### Parameters for getting chromatogram 🕵
 ```{r eval=FALSE} 
 params <- list()
    
@@ -72,10 +73,16 @@ params$CentWave <- CentWaveParam( ppm = 20,
 
    
    
+### Threshold for retention time (minutes) and m/z for ploting chromatogram 🕵
+```{r eval=FALSE}
+thre_rt = 2
+thre_mz = 0.01
+
+```
 
 
 
-#6.Conducting 
+#### Conducting 
 ```{r eval=FALSE}
 if (grepl("ku_00007", path_files_mzML)) {
      
