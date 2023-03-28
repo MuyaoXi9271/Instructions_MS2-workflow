@@ -1,5 +1,5 @@
 --- 
-title: "Instructions_MS2-workflow_robot"
+title: "Instructions_MS2-workflow"
 author: "Muyao Xi"
 date: "`r Sys.Date()`"
 site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
