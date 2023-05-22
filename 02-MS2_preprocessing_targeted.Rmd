@@ -1,5 +1,5 @@
 # MS2 preprocessing targeted
-Please copy the template of excel file which fits your data `LCMS_library_template1.xlsx` or `LCMS_library_template2.xlsx` under the forlder `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_preprocessing\LCMS_library_template.xlsx` and fill in the information related to the standards which you would like to preprocess. You must fill the columns with the column name in and regarding the filenames, they are without extension<font color = "red">red color</font>
+Please copy the template of excel file which fits your data `LCMS_library_template1.xlsx` or `LCMS_library_template2.xlsx` under the folder `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_preprocessing\LCMS_library_template.xlsx` and fill in the information related to the standards which you would like to preprocess. You must fill the columns with the column name in and regarding the filenames, they are without extension<font color = "red">red color</font>
 
 
 
@@ -56,6 +56,9 @@ colname_rt <- "Library.rt.RF" # or "Library.rt.HILLIC"
    
 ### Parameters for getting chromatogram 🕵
 ```{r eval=FALSE} 
+library(xcms)
+
+
 params <- list()
    
 params$CentWave <- CentWaveParam( ppm = 20,
@@ -84,11 +87,7 @@ thre_mz = 0.01
 
 #### Conducting 
 ```{r eval=FALSE}
-if (grepl("ku_00007", path_files_mzML)) {
-     
-     source("")
-     
-} else {source(paste0(path_utils_prepro, "/XCMS_checkRT.R"))}
+source(paste0(path_utils_prepro, "/XCMS_checkRT.R"))
 ```
 
    
@@ -162,7 +161,7 @@ params$expandMz <- 0.01
    
 #### How many maximal number of scans you would like to keep for further getting combined spectrum for each std 🕵
 ```{r eval=FALSE}
-n_scans <- 6 # (5 CEs * 6/ 1CE*3)
+n_scans <- 6 # (5 CEs * 6/ 1 CE * 3)
 ```
   
    

@@ -1,7 +1,11 @@
 # Small tools
 This chapter consists of: 
 
-1. Among compound name, PubChem id (cid), KEEG id, HMDB, CAS, if you have any one as identifier, you will get thr rest of them and corresponding chemical properties related to this compound
+1. Among compound name, if you have any one as identifier (PubChem id (cid), KEEG id, HMDB, CAS), you will get the rest of them and corresponding chemical properties related to this compound
+
+
+<font color = "red">Copy excel file under the folder of **utils_DBs_api**, replace the context of identifier as yours. e.g. If your identifier is PubChem_CID, choose the sheet name as PubChem_CID, replace the context of PubChem_CID numbers as yours</font>
+
 
 
 
@@ -9,10 +13,17 @@ This chapter consists of:
 The script `DBs_ids_properties.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules`
 
 
-### Provide identifier for grabbing other information 🕵
-<font color = "red">You have to choose one from these 4 options **("Name", "KEGG", "CAS", "HMDB")**</font>
+### Source paths on the server
 ```{r eval=FALSE}
-identifier <- "KEGG" 
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide identifier for grabbing other information 🕵
+<font color = "red">You have to choose one from these 5 options **("PubChem_CID", "Compound_Name", "KEGG", "CAS", "HMDB")**</font>
+```{r eval=FALSE}
+identifier <- "PubChem_CID" 
 ```
 
 
@@ -21,14 +32,8 @@ identifier <- "KEGG"
 absolute path
 ```{r eval=FALSE}
 filename_xlsx <- "H:/From_SUND/Scripts/test/test_DB_ids.xlsx"
-sheetname <- ""
 ```
 
-
-### Provide the column name of identifier 🕵 
-```{r eval=FALSE}
-col_name <- "KEGG"
-```
 
 
 ### What properties you would like to get 🕵
@@ -40,7 +45,7 @@ properties <- c("IUPACName", "InChIKey", "CanonicalSMILES", "MonoisotopicMass")
 
 ### Provide the path for containing output 🕵
 ```{r eval=FALSE}
-path_output <- "H:/From_SUND/Scripts/test/outputs"
+path_output <- "H:/From_SUND/Scripts/outputs"
 ```
 
 

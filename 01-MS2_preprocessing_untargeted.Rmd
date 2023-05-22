@@ -46,6 +46,9 @@ rt_range <- c(0.5, 15)*60
    
 #### Peak picking 🕵
 ```{r eval=FALSE}
+    library(xcms)
+
+
     params <- list()
    
     params$CentWave <- CentWaveParam( ppm = 20,
@@ -119,11 +122,7 @@ rt_range <- c(0.5, 15)*60
    
    
    
-    if (grepl("ku_00007", path_files_mzML)) {
-     
-      source("")
-     
-    } else {source(paste0(path_utils_prepro, "/XCMS.R"))}
+    source(paste0(path_utils_prepro, "/XCMS.R"))
 ```
 
    
@@ -212,11 +211,7 @@ npeaks_remaining <- 60
    
 ### Conduct the extraction of MS2 spectra 
 ```{r eval=FALSE}
-if (grepl("ku_00007", path_rds_xcms_XCMSnExp)) {
-     
-     source("")
-     
-} else {source(paste0(path_utils_prepro, "/extract_MS2.R"))}
+source(paste0(path_utils_prepro, "/extract_MS2.R"))
 ```
 
 
@@ -309,11 +304,7 @@ params$multiplier <- 4         #highest number(n) of allowed clusterion [nM+ion]
    
 ### Conduct CAMERA
 ```{r eval=FALSE}
-if (grepl("ku_00007", path_rds_xcms_XCMSnExp)) {
-     
-     source("")
-     
-} else {source(paste0(path_utils_prepro, "/CAMERA.R"))}
+source(paste0(path_utils_prepro, "/CAMERA.R"))
      
 ```
 

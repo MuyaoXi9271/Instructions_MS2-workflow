@@ -5,7 +5,7 @@ This chapter consists of:
 
 2. Submit job of FBMN and jobs based on FBMN on GNPS (involved uploading files to the server of GNPS)
 
-3. Download all results from all submitted jobs  
+3. Download all results from all submitted jobs and merge into a large table  
 
 4. Compare MS2-experimental data with our in-house library 
 
@@ -28,7 +28,7 @@ The script `1b.Pipeline_GNPS_upload_submitjobs_based on CMN.R` is available unde
 
 <div class="Keats_red">
 4.Changing the parameters related to the jobs you would like to run.
-5.Please pay attention to the filenames **without space**
+5.Please pay attention to the filenames **no space within each filename**
 </div>
 </div>
 
@@ -360,11 +360,7 @@ if (exists("path_rds_cam_xsAnnotate")) {
 }
    
    
-if (grepl("ku_00007", path_rds_expMS2)) {
-  
-  source("")
-     
-} else {source(paste0(path_utils_annotation, "/quan_table.R"))}
+source(paste0(path_utils_annotation, "/quan_table.R"))
 ```
 
 
@@ -406,17 +402,17 @@ project_name <- "workflow_test"
 round <- "1"            #what ordinal number comes current samples? e.g. "1", or "2",...
 sample_type <- "serum"
 omics <- "metabolomics"
-method <- "RF"
+method <- "RP"
 ```
 
    
    
 ##### Information related to run jobs on GNPS or computer room 🕵
 ```{r eval=FALSE}
-username <- "cherish_199271"
-password <- ""
+username <- "xx"
+password <- "xx"
 host <- "massive.ucsd.edu"
-email <- ""
+email <- "xx"
 ```
 
       
