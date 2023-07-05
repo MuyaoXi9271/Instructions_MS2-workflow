@@ -12,9 +12,8 @@ source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
 
 
 ## Specify the polarity 🕵
-<div class="Keats"> options : "POS", "NEG", "c("POS", "NEG")" </div>
 ```{r eval=FALSE}
-polarity <- "POS"
+polarity <- "POS" #other options "NEG", "c("POS", "NEG")"
 ```
 
   
@@ -39,12 +38,13 @@ path_files_from_DA <- "H:/From_SUND/Scripts/test/MS2pos_untarget"
 
 
 ## Conduct
-### Add extension (if not available) to files exported from dataanalysis
+### Add extension (**if not available**) to files exported from dataanalysis
 ```{r eval=FALSE}
 files_from_DA <- list.files(path_files_from_DA, full.names = TRUE)
 id_not_ext <- setdiff(1:length(files_from_DA), 
                       grep("\\.mzML$|\\.d$", basename(files_from_DA)))
-    
+
+
 if (length(id_not_ext) != 0) {
   
 

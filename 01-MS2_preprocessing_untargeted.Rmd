@@ -20,7 +20,7 @@ polarity <- "POS"
    
    
    
-### Path of storing .mzML files (must have transferred by OpenMS) 🕵 
+### Path of storing .mzML files (**!!! have transferred by OpenMS**) 🕵 
 ```{r eval=FALSE}
 path_files_mzML <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
 ```
@@ -192,7 +192,7 @@ params$mzfun <- median
    
    
 ### (Optional but recommended) Plot the MS2 spectra ✈️
-<div class="Keats_red"> If not, please do not run this line </div>
+<div class="Keats_red">**If not, please do not run this line**</div>
 ```{r eval=FALSE}
 plot_pdf <- "TRUE"
 ```
@@ -200,7 +200,7 @@ plot_pdf <- "TRUE"
    
    
 ### (Optional but reconmended) Reduce the number of the MS2 spectra ✈️
-<div class="Keats_red"> If not, please do not run these two lines </div>
+<div class="Keats_red">**If not, please do not run these two lines**</div>
 ```{r eval=FALSE}
 npeaks_reduce <- "TRUE"
 npeaks_remaining <- 60
@@ -223,7 +223,7 @@ source(paste0(path_utils_prepro, "/extract_MS2.R"))
 
 
 ## (Optional) CAMERA
-<font color = "red">If you would like to get more information related to adduct, please run these lines, but you have to have at least 6 samples</font>
+<font color = "red">If you would like to get more information related to adduct, please run these lines, but you have to have at least **6** samples</font>
 
    The script `4.(optional)Pipeline_CAMERA.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
    

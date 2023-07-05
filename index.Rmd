@@ -1,6 +1,6 @@
 --- 
 title: "Instructions_MS2-workflow"
-author: "Muyao Xi"
+author: "Muyao Xi (muyao.xi@sund.ku.dk)"
 date: "`r Sys.Date()`"
 site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 ---
@@ -15,7 +15,7 @@ site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 
 4. If you would like to use tools on GNPS, please register for your personal username and password
 
-5. You should replace the context with yours under the section ends with 🕵️
+5. You should replace values of variables with yours under the section ends with 🕵️
 
 6. You could select whether run the section ends with ✈️
 

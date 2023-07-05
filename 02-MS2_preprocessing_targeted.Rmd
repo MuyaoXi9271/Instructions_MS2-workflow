@@ -1,5 +1,5 @@
 # MS2 preprocessing targeted
-Please copy the template of excel file which fits your data `LCMS_library_template1.xlsx` or `LCMS_library_template2.xlsx` under the folder `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_preprocessing\LCMS_library_template.xlsx` and fill in the information related to the standards which you would like to preprocess. You must fill the columns with the column name in and regarding the filenames, they are without extension<font color = "red">red color</font>
+Please copy the template of excel file which fits your data `LCMS_library_template1.xlsx` or `LCMS_library_template2.xlsx` under the folder `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_preprocessing\LCMS_library_template.xlsx` and fill in the information related to the standards which you would like to preprocess. You must fill the columns with the column name in red color. Regarding the filled filenames, they are without extension
 
 
 

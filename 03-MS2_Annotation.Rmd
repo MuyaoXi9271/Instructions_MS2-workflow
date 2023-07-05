@@ -9,7 +9,7 @@ This chapter consists of:
 
 4. Compare MS2-experimental data with our in-house library 
 
-5. Merge the results from each job and library-match
+5. Merge the results obtained from each GNPS-job and library-match into one table
 
 
 
@@ -26,10 +26,9 @@ The script `1b.Pipeline_GNPS_upload_submitjobs_based on CMN.R` is available unde
 
 3.Running CMN (classic molecular network) and a couple of other jobs based on CMN on GNPS.
 
-<div class="Keats_red">
 4.Changing the parameters related to the jobs you would like to run.
-5.Please pay attention to the filenames **no space within each filename**
-</div>
+
+5.Please pay attention to the filenames <font color = "red">**no space within each filename**</font>
 </div>
 
 
@@ -63,7 +62,7 @@ method <- ""
    
 
    
-#### Information related to run jobs on GNPS or computer room 🕵
+#### Information related to run jobs on GNPS 🕵
 ```{r eval=FALSE}
 username <- ""
 password <- ""
@@ -96,8 +95,8 @@ path_outputs_params_jobids <- "H:/From_SUND/Scripts/outputs"
 
 
 #The two lines below are for storing all parameters related to the workflows you will run
-list_param <- list()
-list_jobid <- list()
+list_param_GNPS <- list()
+list_jobid_GNPS <- list()
 ```
 
 
@@ -141,7 +140,7 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 
 
 
-### [Dereplicator](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator/) (after CMN done) 
+### [Dereplicator](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator/) 
 #### Generate parameters 🕵
 ```{r eval=FALSE}
 parameters_CMN_Dereplicator <- list()
@@ -229,7 +228,11 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
  
   
 ### [MS2LDA](https://ccms-ucsd.github.io/GNPSDocumentation/ms2lda/) 
-#### Generate parameters 🕵    
+#### Generate parameters 🕵  
+
+<font color = "red">If the polarity is negative mode, recommend to exclude all motif by changing values from "yes" to "no" </font>
+
+
 ```{r eval=FALSE}
 parameters_CMN_MS2LDA <- list()
 parameters_CMN_MS2LDA["bin_width"] <- "0.01" #other options are 0.005, 0.05, 0.1, 0.5
@@ -261,21 +264,15 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 ### [MNE (MolNetEnhancer)](https://ccms-ucsd.github.io/GNPSDocumentation/molnetenhancer/)
 #### Generate parameters 🕵  
 ```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
 parameters_CMN_MNE <- list()
 parameters_CMN_MNE["enter_varquest_id"] <- "None"    # leave it as "None" if this id is not available 
 
-
-if (!exists("list_jobid")) {
-  
-  list_jobid <- readRDS(paste0(path_outputs_params_jobids, "/jobids_CMN_", project_name, "_", round, "_", sample_type, "_", omics, "_", method, "_", polarity, ".rds"))
-
-}
-
-
-parameters_CMN_MNE["enter_nap_id"] <- list_jobid$CMN_NAP_task_id  
-parameters_CMN_MNE["enter_gnps_task_id"] <- list_jobid$CMN_task_id
-parameters_CMN_MNE["enter_Dereplicator_id"] <- list_jobid$CMN_Dereplicator_task_id
-parameters_CMN_MNE["enter_ms2lda_job_id"] <- list_jobid$CMN_MS2LDA_task_id  # ms2lda_task_id_pos$ms2lda. Leave it as "None" if this id is not available
+parameters_CMN_MNE["enter_nap_id"] <- list_jobid_GNPS$CMN_NAP_task_id  
+parameters_CMN_MNE["enter_gnps_task_id"] <- list_jobid_GNPS$CMN_task_id
+parameters_CMN_MNE["enter_Dereplicator_id"] <- list_jobid_GNPS$CMN_Dereplicator_task_id
+parameters_CMN_MNE["enter_ms2lda_job_id"] <- list_jobid_GNPS$CMN_MS2LDA_task_id  #Leave it as "None" if this id is not available
 ```
 
 
@@ -299,9 +296,11 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 
 
 ## GNPS-Submit jobs based on FBMN
-You only need to prepare a reprocessed MS2-spectra as the format of `.mgf` and the corresponding quantification table as the format of `.txt`
+You only need to prepare a reprocessed MS2-spectra as the format of `.mgf` and the corresponding quantification table as the format of `.txt` or `.csv`
 
-<font color = "red">change the parameters in the sections below related to the workflows you would like to run</font>
+<font color = "red">1. Not recommend to preprocess MS2 data by metaboscape. Because 1) Regarding .mgf file, the output is average MS2 spectra across multiple CEs; 2) Regarding .csv file, m/z is not correct</font>
+
+<font color = "red">2. Change the parameters in the sections below related to the workflows you would like to run</font>
 
 
 ### Form quantification table
@@ -371,11 +370,15 @@ source(paste0(path_utils_annotation, "/quan_table.R"))
 ### Upload files, generate parameters, and submit jobs
 The script `1b.Pipeline_GNPS_upload_submitjobs_based on FBMN.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
 
-<div class="Keats">The pipeline is for: $\\$
-1.Uploading files to the server of GNPS. $\\$
-2.Generating parameters for each job you would like to run. $\\$
-3.Running FBMN (feature based molecular network) and a couple of other jobs based on FBMN on GNPS. $\\$
-<div class="Keats_red">4.Changing the parameters related to the jobs you would like to run.</div>
+<div class="Keats">The pipeline is for:
+
+1.Uploading files to the server of GNPS. 
+
+2.Generating parameters for each job you would like to run.
+
+3.Running FBMN (feature based molecular network) and a couple of other jobs based on FBMN on GNPS. 
+
+<font color = "red">4.Changing the parameters related to the jobs you would like to run.</font>
 </div>
 
 
@@ -426,7 +429,7 @@ masterpath <- "H:/From_SUND/Scripts/outputs"
 
 
 ##### Provide the filenames 🕵
-`.txt` of quantification table and `.mgf` file of MS2 spectra 
+`.txt` or `.csv`of quantification table and `.mgf` file of MS2 spectra 
 ```{r eval=FALSE}
 filenames <- c("quantable_POS.txt", "exp_MS2_POS.mgf")
 
@@ -456,8 +459,8 @@ path_outputs_params_jobids <- "H:/From_SUND/Scripts/outputs"
 
 
 #The two lines below are for storing all parameters related to the workflows you will run
-list_param <- list()
-list_jobid <- list()
+list_param_GNPS <- list()
+list_jobid_GNPS <- list()
 ```
 
 
@@ -523,6 +526,7 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 
 #### [NAP](https://ccms-ucsd.github.io/GNPSDocumentation/nap/)
 <font color = "red">\*parameters are different from different polarities</font>
+
 ##### Generate parameters 🕵
 ```{r eval=FALSE}
 parameters_FBMN_NAP <- list()
@@ -564,7 +568,6 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 
 
 #### (Optional) [MS2LDA](https://ccms-ucsd.github.io/GNPSDocumentation/ms2lda/) ✈️ 
-<font color = "red">It is only available when you preprocessed MS2 by MZmine</font> 
 ##### Generate parameters 🕵
 ```{r eval=FALSE}
 parameters_FBMN_MS2LDA <- list()
@@ -598,24 +601,17 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 #### [MNE (MolNetEnhancer)](https://ccms-ucsd.github.io/GNPSDocumentation/molnetenhancer/)
 ##### Generate parameters 🕵  
 ```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
 parameters_FBMN_MNE <- list()
 parameters_FBMN_MNE["enter_varquest_id"] <- "None"    # leave it as "None" if this id is not available 
 
 
-if (!exists("list_jobid")) {
-  
-  list_jobid <- readRDS(paste0(path_outputs_params_jobids, "/jobids_FBMN_", project_name, "_", round, "_", sample_type, "_", omics, "_", method, "_", polarity, ".rds"))
-
-}
-
-parameters_FBMN_MNE["enter_nap_id"] <- list_jobid$FBMN_NAP_task_id
-parameters_FBMN_MNE["enter_gnps_task_id"] <- list_jobid$FBMN_task_id
+parameters_FBMN_MNE["enter_nap_id"] <- list_jobid_GNPS$FBMN_NAP_task_id
+parameters_FBMN_MNE["enter_gnps_task_id"] <- list_jobid_GNPS$FBMN_task_id
+parameters_FBMN_MNE["enter_ms2lda_job_id"] <- list_jobid_GNPS$FBMN_MS2LDA_task_id # or "None"
 ```
-
-<font color = "red">If you preprocess your MS2 data by using MZmine, replace the value below with id of job MS2LDA</font>
-```{r eval=FALSE}
-parameters_FBMN_MNE["enter_ms2lda_job_id"] <- "None"
-```
+``
    
    
 
@@ -675,16 +671,16 @@ method <- ""
    
 
 ### Provide the absolute path of "list of job ids" by including the name of that list 🕵
-<font color = "red">name should start with **jobid**</font>
+<font color = "red">name should start with **list_jobid_GNPS**</font>
 ```{r eval=FALSE}
-path_list <- "H:/From_SUND/Scripts/outputs/jobids_CMN_workflow_test_1_serum_metabolomics_RF_POS.rds"
+path_list <- "H:/From_SUND/Scripts/outputs/jobids_CMN_based_workflow_test_1_serum_metabolomics_RF_POS.rds"
 ```
 
  
 
 ### Download results from the list of job ids
 ```{r eval=FALSE}
-list_jobid <- readRDS(path_list)
+list_jobid_GNPS <- readRDS(path_list)
 source(paste0(path_utils_annotation, "/GNPS_downloadjobs.R"))
 ```
    
@@ -742,7 +738,7 @@ cor_threshold <- 0.7
    
 ### Provide the path of storing output 🕵
 ```{r eval=FALSE}
-path_output <- "H:/From_SUND/Scripts/outputs"
+path_outputs <- "H:/From_SUND/Scripts/outputs"
 ```
 
 
@@ -769,7 +765,7 @@ if (polarity == "POS") {
  
 source(paste0(path_func, "/lib_vs_exp_MS2.R"))
 
-MS2_vs_exp(path_lib_MS2, path_mgf_expMS2, mz_threshold, cor_threshold, polarity, path_output, cp_method)
+MS2_vs_exp(path_lib_MS2, path_mgf_expMS2, mz_threshold, cor_threshold, polarity, path_outputs, cp_method)
 ```
 
  
@@ -812,7 +808,7 @@ path_downloaded_files <- "H:/From_SUND/Scripts/outputs/workflow_test_1_serum_met
 
 
 #### Provide the absolute path of "list of job ids" by including the name of that list  🕵
-<font color = "red">name should start with **jobids**</font>
+<font color = "red">name should start with **list_jobid_GNPS**</font>
 ```{r eval=FALSE}
 path_list <- "H:/From_SUND/Scripts/outputs/jobids_CMN_workflow_test_1_serum_metabolomics_RF_POS.rds"
 
@@ -841,15 +837,31 @@ polarity <- "POS"
 ```
 
 
+#### Provide what workflow based 🕵
+```{r eval=FALSE}
+workflow_based <- "CMN" # or "FBMN"
+```
+
 
 #### Conduct
 ```{r eval=FALSE}
 library(dplyr)
 
 list_jobid <- readRDS(path_list)
-workflow <- names(list_jobids) %>% gsub("_task_id", "",.) %>% strsplit("[A-Z]+_") %>% unlist() %>% unique() %>% na_if("") %>% na.omit() 
+workflow_all <- names(list_jobid) %>% gsub("_task_id", "",.) 
+workflow <- workflow_all[grepl(workflow_based, workflow_all)] %>% strsplit("[A-Z]+_") %>% unlist() %>% unique() %>% na_if("") %>% na.omit() 
 
-Merge_outputs_from_GNPS(path_downloaded_files, prep_method, workflow, polarity, path_output)
+if (workflow_based == "FBMN") {
+  
+  Merge_outputs_from_GNPS(path_downloaded_files, prep_method, workflow, polarity, path_outputs)
+  
+} else if (workflow_based == "CMN") {
+  
+  Merge_outputs_from_GNPS(path_downloaded_files, NULL, workflow, polarity, path_outputs)
+  
+}
+
+
 ```
 
 
@@ -862,7 +874,7 @@ Merge_outputs_from_GNPS(path_downloaded_files, prep_method, workflow, polarity, 
 #### Merge library-match into GNPS-match
 The script `4.Pipeline_merge_lib-match_GNPS-match.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
 
-<font color = "red"> it is more precise to merge the result from library-match with the results from FBMN-based jobs on GNPS</font>
+<font color = "red"> It is more precise to merge the result from library-match with the results from FBMN-based jobs on GNPS</font>
 
 
 ##### Source paths on the server
