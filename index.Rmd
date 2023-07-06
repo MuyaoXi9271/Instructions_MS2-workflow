@@ -7,15 +7,17 @@ site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 
 # Prerequisites 
 
-1. Download **OpenMS** for converting the format of MS2-files (<a href="https://sourceforge.net/projects/open-ms/" target="blank">link for downloading OpenMS</a>)
+1. Download **OpenMS** <a href="https://sourceforge.net/projects/open-ms/" target="blank"></a> for converting the format of MS2-files 
 
-2. Export MS2-files as .mzML from $dataanalysis$
+2. (optional) Download **WinSCP** <a href="https://winscp.net/eng/downloads.php></a> for transferring local files to server of GNPS
 
-3. In order to install all essential packages, please run script **set_up_enviroment.R** under the folder of **J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\utils\\utils_MS2_set_up** before doing any step
+3. Export MS2-files as .mzML from $dataanalysis$
 
-4. If you would like to use tools on GNPS, please register for your personal username and password
+4. In order to install all essential packages, please run script **set_up_enviroment.R** under the folder of **J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\utils\\utils_MS2_set_up** before doing any step
 
-5. You should replace values of variables with yours under the section ends with 🕵️
+5. If you would like to use tools on GNPS, please register for your personal username and password
 
-6. You could select whether run the section ends with ✈️
+6. You should replace values of variables with yours under the section ends with 🕵️
+
+7. You could select whether run the section ends with ✈️
 
