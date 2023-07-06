@@ -1,1 +1,2 @@
 # Wait for you test and fill this page
+1. When upload files via FTP, meet the error "Unrecognized CURL options: connectiontimeout", wait for a while and run the codes again. Or try to open the software "WinSCP" to see whether it works manually.

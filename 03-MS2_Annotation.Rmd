@@ -53,7 +53,7 @@ polarity <- "POS"
 #### Provide project information (only provide the value you want)🕵
 ```{r eval=FALSE}
 project_name <- ""
-round <- ""
+study <- ""
 sample_type <- ""
 omics <- ""
 method <- ""
@@ -89,7 +89,7 @@ upload_file_FTP(  masterpath,
                   host, 
                   project_name = project_name, 
                   polarity     = polarity, 
-                  round        = round, 
+                  study        = study, 
                   sample_type  = sample_type, 
                   omics        = omics, 
                   method       = method
@@ -413,7 +413,7 @@ polarity <- "POS"
 ##### Provide project information 🕵
 ```{r eval=FALSE}
 project_name <- "workflow_test" 
-round <- "1"            #what ordinal number comes current samples? e.g. "1", or "2",...
+study <- "1"            #what ordinal number comes current samples? e.g. "1", or "2",...
 sample_type <- "serum"
 omics <- "metabolomics"
 method <- "RP"
@@ -464,7 +464,7 @@ upload_file_FTP(  masterpath,
                   host, 
                   project_name,
                   polarity, 
-                  round       = round, 
+                  study       = study, 
                   sample_type = sample_type, 
                   omics       = omics, 
                   method      = method
@@ -684,7 +684,7 @@ download_path <- "H:/From_SUND/Scripts/outputs"
 ### Provide project information 🕵
 ```{r eval=FALSE}
 project_name <- ""
-round <- ""
+study <- ""
 sample_type <- ""
 omics <- ""
 method <- ""
