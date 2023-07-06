@@ -50,7 +50,7 @@ polarity <- "POS"
   
    
 
-#### Provide project information 🕵
+#### Provide project information (only provide the value you want)🕵
 ```{r eval=FALSE}
 project_name <- ""
 round <- ""
@@ -80,9 +80,20 @@ masterpath <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
 
    
    
-#### Upload files into server (FTP)
+#### Upload files into server (FTP) \n(consistent with the parameters provided above)🕵
 ```{r eval=FALSE}
-upload_file_FTP(masterpath, list.files(masterpath), username, password, host, project_name, round, sample_type, omics, method, polarity)
+upload_file_FTP(  masterpath, 
+                  list.files(masterpath), 
+                  username, 
+                  password, 
+                  host, 
+                  project_name = project_name, 
+                  polarity     = polarity, 
+                  round        = round, 
+                  sample_type  = sample_type, 
+                  omics        = omics, 
+                  method       = method
+               )
 ```
 
 
@@ -446,7 +457,18 @@ prep_method <- "XCMS3" #other options are illustrated within the function in the
 
 ##### Upload files into server (FTP)
 ```{r eval=FALSE}
-upload_file_FTP(masterpath, filenames, username, password, host, project_name, round, sample_type, omics, method, polarity)
+upload_file_FTP(  masterpath, 
+                  filenames, 
+                  username, 
+                  password, 
+                  host, 
+                  project_name,
+                  polarity, 
+                  round       = round, 
+                  sample_type = sample_type, 
+                  omics       = omics, 
+                  method      = method
+               )
 ```
   
   
