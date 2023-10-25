@@ -51,7 +51,6 @@ path-of-storing-.mzml-files-without-filenames
 path-of-storing-outputs-3
 filename-for-containing-information-of-standards-including-absolute-path-please-fill-in-the-provided-template-as-well-as-the-sheet-name
 colname-of-retention-time
-parameters-for-getting-chromatogram
 threshold-for-retention-time-minutes-and-mz-for-ploting-chromatogram
 conducting
 extraction-of-ms2-spectra-1
@@ -176,5 +175,6 @@ provide-filename-and-sheetname-for-searching-other-information
 what-properties-you-would-like-to-get
 provide-the-path-for-containing-output
 conduct-4
+troubleshooting
 ftp-transfer-local-files-to-server-of-gnps
 download-files-from-gnps-platform
