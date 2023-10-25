@@ -7,7 +7,7 @@ site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 
 # Prerequisites 
 
-1. Download **OpenMS** <a href="https://sourceforge.net/projects/open-ms/" target="blank"></a> for converting the format of MS2-files 
+1. Download **OpenMS** <a href="https://abibuilder.cs.uni-tuebingen.de/archive/openms/OpenMSInstaller/release/" target="blank"></a> for converting the format of MS2-files 
 
 2. (optional) Download **WinSCP** <a href="https://winscp.net/eng/downloads.php></a> for transferring local files to server of GNPS
 

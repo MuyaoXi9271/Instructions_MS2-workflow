@@ -73,7 +73,7 @@ email <- ""
 
    
 #### Provide the path of storing files without filenames 🕵
-<font color = "red">To be sure only files for running CMN from unique polarity within the provided folder</font>
+<font color = "red">To be sure only files from unique polarity for running CMN within the provided folder</font>
 ```{r eval=FALSE}
 masterpath <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
 ```
@@ -100,6 +100,7 @@ upload_file_FTP(  masterpath,
 
 
 ### Prerequisites before generating parameters and submitting jobs 🕵
+!!! Run the chunk below whenever start running any job
 ```{r eval=FALSE}
 #Provide the path for storing the lists of both parameters and job ids  
 path_outputs_params_jobids <- "H:/From_SUND/Scripts/outputs"
@@ -296,6 +297,29 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
 
 
 
+
+
+### [Merge network polarity](https://ccms-ucsd.github.io/GNPSDocumentation/mergepolarity/)
+#### Generate parameters 🕵
+
+<font color = "red">If it is CMN-based network, the unit of tolerance of rt is **second** </font>
+```{r eval=FALSE}
+list_param_jobid_MNP <- list()
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
+
+parameters_CMN_MNP <- list()
+parameters_CMN_MNP["enter_gnps_positive_network_task_id"] <- list_jobid_MN_both$CMN_task_id_POS    
+parameters_CMN_MNP["enter_gnps_negative_network_task_id"] <- list_jobid_MN_both$CMN_task_id_NEG    
+parameters_CMN_MNP["enter_a_rt_tolerance_for_aligning_masses_between_two_runs"] <- 10
+parameters_CMN_MNP["enter_a_ppm_tolerance_for_aligning_masses_between_two_runs"] <- 30 
+```
+
+
+#### Merge polarities
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
 
 
 
@@ -648,6 +672,35 @@ source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
  
 
 
+### [Merge network polarity](https://ccms-ucsd.github.io/GNPSDocumentation/mergepolarity/)
+#### Generate parameters 🕵
+
+<font color = "red">If it is FBMN-based network, the unit of tolerance of rt is **minute** </font>
+```{r eval=FALSE}
+list_param_jobid_MNP <- list()
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
+
+parameters_FBMN_MNP <- list()
+parameters_FBMN_MNP["enter_gnps_positive_network_task_id"] <- list_jobid_MN_both$FBMN_task_id_POS    
+parameters_FBMN_MNP["enter_gnps_negative_network_task_id"] <- list_jobid_MN_both$FBMN_task_id_NEG    
+parameters_FBMN_MNP["enter_a_rt_tolerance_for_aligning_masses_between_two_runs"] <- 0.1
+parameters_FBMN_MNP["enter_a_ppm_tolerance_for_aligning_masses_between_two_runs"] <- 20 
+```
+
+
+#### Merge polarities
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -681,7 +734,7 @@ download_path <- "H:/From_SUND/Scripts/outputs"
    
 
 
-### Provide project information 🕵
+### Provide project information (only run the line with value you provide)🕵
 ```{r eval=FALSE}
 project_name <- ""
 study <- ""
@@ -707,7 +760,23 @@ source(paste0(path_utils_annotation, "/GNPS_downloadjobs.R"))
 ```
    
       
+      
+      
+### Provide the absolute path of "list_param_jobid_MNP" by including the name of that list 🕵
+<font color = "red">name should start with **list_param_jobid_MNP**</font>
+```{r eval=FALSE}
+path_jobid_MNP <- "H:/From_SUND/Scripts/outputs/list_param_jobid_MNP_xx_both.rds"
+```
 
+
+
+### Download result of merging networks from both polarities
+```{r eval=FALSE}
+list_jobid_GNPS <- readRDS(path_jobid_MNP)
+source(paste0(path_utils_annotation, "/GNPS_downloadjobs.R"))
+```
+   
+      
 
 
 

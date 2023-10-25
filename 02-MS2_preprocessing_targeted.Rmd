@@ -54,27 +54,6 @@ colname_rt <- "Library.rt.RF" # or "Library.rt.HILLIC"
     
 
    
-### Parameters for getting chromatogram 🕵
-```{r eval=FALSE} 
-library(xcms)
-
-
-params <- list()
-   
-params$CentWave <- CentWaveParam( ppm = 20,
-                                  peakwidth =  c(0.05,0.2)*60,
-                                  snthresh = 2,
-                                  noise = 1500,
-                                  prefilter = c(3,1500),
-                                  integrate = 2,
-                                  mzdiff = -0.001,
-                                  verboseColumns = TRUE,
-                                  fitgauss = TRUE,
-                                  extendLengthMSW = TRUE
-   )
-```
-
-   
    
 ### Threshold for retention time (minutes) and m/z for ploting chromatogram 🕵
 ```{r eval=FALSE}

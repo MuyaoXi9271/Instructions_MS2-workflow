@@ -1,2 +1,11 @@
-# Wait for you test and fill this page
-1. When upload files via FTP, meet the error "Unrecognized CURL options: connectiontimeout", wait for a while and run the codes again. Or try to open the software "WinSCP" to see whether it works manually.
+# FTP (transfer local files to server of GNPS)
+| 1. When upload files via FTP, meet the error "Unrecognized CURL options: connectiontimeout" 
+
+| **Solution**: wait for a while and run the codes again. Or try to open the software "WinSCP" to see whether it works manually.
+
+
+
+# Download files from GNPS platform
+| 1. Warning: cannot open file 'xx.zip': No such file or directory Error in file(file.path(outputs_folder, paste0(workflow, ".zip")), "wb") : cannot open the connection
+| **Solution**: 1. assign $download_path$ with C/: drive instead H/: or J/: drive
+                2. or remove "recursive = TRUE"

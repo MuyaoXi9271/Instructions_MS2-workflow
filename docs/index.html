@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Instructions_MS2-workflow</title>
   <meta name="description" content="Instructions_MS2-workflow" />
-  <meta name="generator" content="bookdown 0.32 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Instructions_MS2-workflow" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Muyao Xi (muyao.xi@sund.ku.dk)" />
 
 
-<meta name="date" content="2023-05-25" />
+<meta name="date" content="2023-09-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -119,6 +119,10 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -240,10 +244,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="5.1.1.1" data-path="ms2-annotation.html"><a href="ms2-annotation.html#source-paths-on-the-server-and-relevant-function"><i class="fa fa-check"></i><b>5.1.1.1</b> Source paths on the server and relevant function</a></li>
 <li class="chapter" data-level="5.1.1.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-polarity-upper-case"><i class="fa fa-check"></i><b>5.1.1.2</b> Provide polarity (upper case) 🕵</a></li>
-<li class="chapter" data-level="5.1.1.3" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-project-information"><i class="fa fa-check"></i><b>5.1.1.3</b> Provide project information 🕵</a></li>
+<li class="chapter" data-level="5.1.1.3" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-project-information-only-provide-the-value-you-want"><i class="fa fa-check"></i><b>5.1.1.3</b> Provide project information (only provide the value you want)🕵</a></li>
 <li class="chapter" data-level="5.1.1.4" data-path="ms2-annotation.html"><a href="ms2-annotation.html#information-related-to-run-jobs-on-gnps"><i class="fa fa-check"></i><b>5.1.1.4</b> Information related to run jobs on GNPS 🕵</a></li>
 <li class="chapter" data-level="5.1.1.5" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-the-path-of-storing-files-without-filenames"><i class="fa fa-check"></i><b>5.1.1.5</b> Provide the path of storing files without filenames 🕵</a></li>
-<li class="chapter" data-level="5.1.1.6" data-path="ms2-annotation.html"><a href="ms2-annotation.html#upload-files-into-server-ftp"><i class="fa fa-check"></i><b>5.1.1.6</b> Upload files into server (FTP)</a></li>
+<li class="chapter" data-level="5.1.1.6" data-path="ms2-annotation.html"><a href="ms2-annotation.html#upload-files-into-server-ftp-consistent-with-the-parameters-provided-above"><i class="fa fa-check"></i><b>5.1.1.6</b> Upload files into server (FTP) (consistent with the parameters provided above)🕵</a></li>
 </ul></li>
 <li class="chapter" data-level="5.1.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#prerequisites-before-generating-parameters-and-submitting-jobs"><i class="fa fa-check"></i><b>5.1.2</b> Prerequisites before generating parameters and submitting jobs 🕵</a></li>
 <li class="chapter" data-level="5.1.3" data-path="ms2-annotation.html"><a href="ms2-annotation.html#cmn"><i class="fa fa-check"></i><b>5.1.3</b> CMN</a>
@@ -276,6 +280,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.1.8.1" data-path="ms2-annotation.html"><a href="ms2-annotation.html#generate-parameters-5"><i class="fa fa-check"></i><b>5.1.8.1</b> Generate parameters 🕵</a></li>
 <li class="chapter" data-level="5.1.8.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#submit-mne"><i class="fa fa-check"></i><b>5.1.8.2</b> Submit MNE</a></li>
 </ul></li>
+<li class="chapter" data-level="5.1.9" data-path="ms2-annotation.html"><a href="ms2-annotation.html#merge-network-polarity"><i class="fa fa-check"></i><b>5.1.9</b> Merge network polarity</a>
+<ul>
+<li class="chapter" data-level="5.1.9.1" data-path="ms2-annotation.html"><a href="ms2-annotation.html#generate-parameters-6"><i class="fa fa-check"></i><b>5.1.9.1</b> Generate parameters 🕵</a></li>
+<li class="chapter" data-level="5.1.9.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#merge-polarities"><i class="fa fa-check"></i><b>5.1.9.2</b> Merge polarities</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#gnps-submit-jobs-based-on-fbmn"><i class="fa fa-check"></i><b>5.2</b> GNPS-Submit jobs based on FBMN</a>
 <ul>
@@ -299,15 +308,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.2.2.6" data-path="ms2-annotation.html"><a href="ms2-annotation.html#optional-ms2lda"><i class="fa fa-check"></i><b>5.2.2.6</b> (Optional) MS2LDA ✈️</a></li>
 <li class="chapter" data-level="5.2.2.7" data-path="ms2-annotation.html"><a href="ms2-annotation.html#mne-molnetenhancer-1"><i class="fa fa-check"></i><b>5.2.2.7</b> MNE (MolNetEnhancer)</a></li>
 </ul></li>
+<li class="chapter" data-level="5.2.3" data-path="ms2-annotation.html"><a href="ms2-annotation.html#merge-network-polarity-1"><i class="fa fa-check"></i><b>5.2.3</b> Merge network polarity</a>
+<ul>
+<li class="chapter" data-level="5.2.3.1" data-path="ms2-annotation.html"><a href="ms2-annotation.html#generate-parameters-12"><i class="fa fa-check"></i><b>5.2.3.1</b> Generate parameters 🕵</a></li>
+<li class="chapter" data-level="5.2.3.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#merge-polarities-1"><i class="fa fa-check"></i><b>5.2.3.2</b> Merge polarities</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="5.3" data-path="ms2-annotation.html"><a href="ms2-annotation.html#gnps-download-jobs"><i class="fa fa-check"></i><b>5.3</b> GNPS-Download jobs</a>
 <ul>
 <li class="chapter" data-level="5.3.1" data-path="ms2-annotation.html"><a href="ms2-annotation.html#source-paths-on-the-server-7"><i class="fa fa-check"></i><b>5.3.1</b> Source paths on the server 🕵</a></li>
 <li class="chapter" data-level="5.3.2" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-polarity-upper-case-2"><i class="fa fa-check"></i><b>5.3.2</b> Provide polarity (upper case) 🕵</a></li>
 <li class="chapter" data-level="5.3.3" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-the-path-of-storing-downloaded-files"><i class="fa fa-check"></i><b>5.3.3</b> Provide the path of storing downloaded files 🕵</a></li>
-<li class="chapter" data-level="5.3.4" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-project-information-2"><i class="fa fa-check"></i><b>5.3.4</b> Provide project information 🕵</a></li>
+<li class="chapter" data-level="5.3.4" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-project-information-only-run-the-line-with-value-you-provide"><i class="fa fa-check"></i><b>5.3.4</b> Provide project information (only run the line with value you provide)🕵</a></li>
 <li class="chapter" data-level="5.3.5" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-the-absolute-path-of-list-of-job-ids-by-including-the-name-of-that-list"><i class="fa fa-check"></i><b>5.3.5</b> Provide the absolute path of “list of job ids” by including the name of that list 🕵</a></li>
 <li class="chapter" data-level="5.3.6" data-path="ms2-annotation.html"><a href="ms2-annotation.html#download-results-from-the-list-of-job-ids"><i class="fa fa-check"></i><b>5.3.6</b> Download results from the list of job ids</a></li>
+<li class="chapter" data-level="5.3.7" data-path="ms2-annotation.html"><a href="ms2-annotation.html#provide-the-absolute-path-of-list_param_jobid_mnp-by-including-the-name-of-that-list"><i class="fa fa-check"></i><b>5.3.7</b> Provide the absolute path of “list_param_jobid_MNP” by including the name of that list 🕵</a></li>
+<li class="chapter" data-level="5.3.8" data-path="ms2-annotation.html"><a href="ms2-annotation.html#download-result-of-merging-networks-from-both-polarities"><i class="fa fa-check"></i><b>5.3.8</b> Download result of merging networks from both polarities</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="ms2-annotation.html"><a href="ms2-annotation.html#ms2-inhouse-library-v.s.-experimental-data"><i class="fa fa-check"></i><b>5.4</b> MS2-inhouse-library v.s. experimental data</a>
 <ul>
@@ -347,6 +363,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.1.6" data-path="small-tools.html"><a href="small-tools.html#conduct-4"><i class="fa fa-check"></i><b>6.1.6</b> Conduct</a></li>
 </ul></li>
 </ul></li>
+<li class="chapter" data-level="7" data-path="ftp-transfer-local-files-to-server-of-gnps.html"><a href="ftp-transfer-local-files-to-server-of-gnps.html"><i class="fa fa-check"></i><b>7</b> FTP (transfer local files to server of GNPS)</a></li>
+<li class="chapter" data-level="8" data-path="download-files-from-gnps-platform.html"><a href="download-files-from-gnps-platform.html"><i class="fa fa-check"></i><b>8</b> Download files from GNPS platform</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -369,12 +387,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Instructions_MS2-workflow</h1>
 <p class="author"><em>Muyao Xi (<a href="mailto:muyao.xi@sund.ku.dk" class="email">muyao.xi@sund.ku.dk</a>)</em></p>
-<p class="date"><em>2023-05-25</em></p>
+<p class="date"><em>2023-09-05</em></p>
 </div>
 <div id="prerequisites" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Prerequisites<a href="index.html#prerequisites" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <ol style="list-style-type: decimal">
-<li><p>Download <strong>OpenMS</strong> for converting the format of MS2-files (<a href="https://sourceforge.net/projects/open-ms/" target="blank">link for downloading OpenMS</a>)</p></li>
+<li><p>Download <strong>OpenMS</strong> <a href="https://abibuilder.cs.uni-tuebingen.de/archive/openms/OpenMSInstaller/release/" target="blank"></a> for converting the format of MS2-files</p></li>
+<li><p>(optional) Download <strong>WinSCP</strong> &lt;a href=“<a href="https://winscp.net/eng/downloads.php" class="uri">https://winscp.net/eng/downloads.php</a>&gt;</a> for transferring local files to server of GNPS</p></li>
 <li><p>Export MS2-files as .mzML from <span class="math inline">\(dataanalysis\)</span></p></li>
 <li><p>In order to install all essential packages, please run script <strong>set_up_enviroment.R</strong> under the folder of <strong>J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_set_up</strong> before doing any step</p></li>
 <li><p>If you would like to use tools on GNPS, please register for your personal username and password</p></li>
