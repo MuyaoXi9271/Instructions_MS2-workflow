@@ -1,0 +1,1709 @@
+--- 
+title: "Instructions_MS2-workflow"
+author: "Muyao Xi (muyao.xi@sund.ku.dk)"
+date: "`r Sys.Date()`"
+site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
+---
+
+# Prerequisites 
+
+1. Download **OpenMS** <a href="https://abibuilder.cs.uni-tuebingen.de/archive/openms/OpenMSInstaller/release/" target="blank"></a> for converting the format of MS2-files 
+
+2. (optional) Download **WinSCP** <a href="https://winscp.net/eng/downloads.php></a> for transferring local files to server of GNPS
+
+3. Export MS2-files as .mzML from $dataanalysis$
+
+4. In order to install all essential packages, please run script **set_up_enviroment.R** under the folder of **J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\utils\\utils_MS2_set_up** before doing any step
+
+5. If you would like to use tools on GNPS, please register for your personal username and password
+
+6. You should replace values of variables with yours under the section ends with 🕵️
+
+7. You could select whether run the section ends with ✈️
+
+
+
+```{r Flow chart for MS2-untargeted and -targeted workflow, echo=FALSE}
+
+knitr::include_graphics(c("images/flow_chart_MS2_untarget.png",
+                          "images/flow_chart_MS2_target.png"))
+
+
+
+```
+
+
+
+
+
+<!--chapter:end:index.Rmd-->
+
+# File converter
+
+The script `1.Pipeline_extension_format_converter.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules` 
+
+
+
+## Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+## Specify the polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS" #other options "NEG", "c("POS", "NEG")"
+```
+
+  
+
+## Path of application of openms 🕵
+```{r eval=FALSE}
+path_openms <- "C:/Program Files/OpenMS-2.8.0/bin"
+```
+
+  
+    
+    
+## Path of storing files (.mzML) exported from dataanalysis for each polarity 🕵
+```{r eval=FALSE}
+path_files_from_DA <- "H:/From_SUND/Scripts/test/MS2pos_untarget"
+```
+
+    
+    
+
+
+
+
+## Conduct
+### Add extension (**if not available**) to files exported from dataanalysis
+```{r eval=FALSE}
+files_from_DA <- list.files(path_files_from_DA, full.names = TRUE)
+id_not_ext <- setdiff(1:length(files_from_DA), 
+                      grep("\\.mzML$|\\.d$", basename(files_from_DA)))
+
+
+if (length(id_not_ext) != 0) {
+  
+
+  file.rename(files_from_DA[id_not_ext],
+              paste0(files_from_DA[id_not_ext], ".mzML")
+             )
+}
+    
+```
+
+    
+    
+    
+### File converter for adapting to run XCMS
+```{r eval=FALSE}
+source(paste0(path_func, "/file-conversion.R"))
+
+#Create a sibling folder for storing files from openms
+path_files_from_openms <- paste0(dirname(path_files_from_DA), "/mzML_openms_MS2_", polarity)
+if (!dir.exists(file.path(path_files_from_openms))) dir.create(path_files_from_openms, showWarnings = FALSE, recursive = TRUE)
+
+#conduct converting  
+mapply(function(x, y) file_conversion(x,y, path_openms, ".mzML", ".mzML"), path_files_from_openms, path_files_from_DA)
+```
+
+    
+    
+
+<!--chapter:end:00-File_converter.Rmd-->
+
+# MS2 preprocessing untargeted
+## XCMS
+   The script `2a.Pipeline_XCMS.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+
+
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+   
+   
+   
+### Path of storing .mzML files (**!!! have transferred by OpenMS**) 🕵 
+```{r eval=FALSE}
+path_files_mzML <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
+```
+
+   
+  
+
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+   
+   
+   
+### Parameters for preprocessing 🕵
+#### Filter the compounds eluted too early and too late 🕵
+```{r eval=FALSE}
+rt_range <- c(0.5, 15)*60 
+```
+
+   
+   
+#### Peak picking 🕵
+```{r eval=FALSE}
+    library(xcms)
+
+
+    params <- list()
+   
+    params$CentWave <- CentWaveParam( ppm = 20,
+                                      peakwidth =  c(0.05,0.2)*60,
+                                      snthresh = 5,
+                                      noise = 1500,
+                                      prefilter = c(3,1500),
+                                      integrate = 2,
+                                      mzdiff = -0.001,
+                                      verboseColumns = TRUE,
+                                      fitgauss = TRUE,
+                                      extendLengthMSW = TRUE
+    )
+```
+
+    
+   
+#### Grouping for alignment 🕵
+```{r eval=FALSE}
+    params$group1 <- PeakDensityParam( sampleGroups = rep(1, length(list.files(path_files_mzML))),
+                                       binSize = 0.01,
+                                       bw = 2,
+                                       minSamples = 1,
+                                       minFraction = 0.3,
+                                       maxFeatures = 20
+    )
+```
+
+   
+   
+#### Alignment 🕵
+```{r eval=FALSE}
+    params$PeakAlign <- PeakGroupsParam(  smooth = "loess",
+                                          span = 0.6,
+                                          minFraction    = 0.8,
+                                          family = "gaussian",
+                                          extraPeaks = 3
+                                          #subset = 
+    )
+```
+
+   
+   
+#### Grouping again with stricter condition after alignment 🕵
+```{r eval=FALSE}
+    params$group2 <- PeakDensityParam( sampleGroups = rep(1, length(list.files(path_files_mzML))),
+                                       binSize = 0.01,
+                                       bw = 1.8,
+                                       minSamples = 1,
+                                       minFraction = 0.6,
+                                       maxFeatures = 20
+    )
+```
+
+   
+   
+#### Gap filling 🕵
+```{r eval=FALSE}
+    params$FillChromPeaksParam <- FillChromPeaksParam(expandMz = 0, 
+                                                      expandRt = 0, 
+                                                      ppm = 30)
+   
+```
+
+   
+   
+#### Conducting XCMS
+```{r eval=FALSE}
+    raw <- readMSData(list.files(path_files_mzML, full.names = TRUE), 
+                      mode = "onDisk")
+   
+   
+   
+    source(paste0(path_utils_prepro, "/XCMS.R"))
+```
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+## Extraction of MS2-spectra
+   The script `3a.Pipeline_extract_MS2.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+   
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide the polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS" #or "NEG"
+```
+
+
+
+### Path of XCMSnExp object after conducting XCMS 🕵
+```{r eval=FALSE}
+path_rds_xcms_XCMSnExp <- "H:/From_SUND/Scripts/outputs/xcms_XCMSnExp_POS.rds" 
+```
+
+
+   
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+ 
+   
+### Parameters for extracting MS2 spectra 🕵
+#### Extraction: Threshold of rt and m/z for extraction and what type of object return 🕵
+```{r eval=FALSE}
+params <- list()
+params$expandRt <- 15
+params$expandMz <- 0.01
+params$return.type <- "Spectra"  #"MSpectra", "list", "List"
+```
+
+   
+   
+### Combining: Threshold of mz, proportion among all samples, type for combining, function for combining mz and intensity 🕵
+```{r eval=FALSE}
+# for getting consensus spectra for each feature at each collision energy
+params$tolerance <- 0.005
+params$peaks <- "intersect"  #"union" #report all peaks from all input spectra 
+params$minProp <- 0.7
+params$intfun <- median
+params$mzfun <- median
+```
+
+   
+   
+### (Optional but recommended) Plot the MS2 spectra ✈️
+<div class="Keats_red">**If not, please do not run this line**</div>
+```{r eval=FALSE}
+plot_pdf <- "TRUE"
+```
+
+   
+   
+### (Optional but reconmended) Reduce the number of the MS2 spectra ✈️
+<div class="Keats_red">**If not, please do not run these two lines**</div>
+```{r eval=FALSE}
+npeaks_reduce <- "TRUE"
+npeaks_remaining <- 60
+```
+
+
+
+   
+### Conduct the extraction of MS2 spectra 
+```{r eval=FALSE}
+source(paste0(path_utils_prepro, "/extract_MS2.R"))
+```
+
+
+   
+   
+
+
+
+
+
+## (Optional) CAMERA
+<font color = "red">If you would like to get more information related to adduct, please run these lines, but you have to have at least **6** samples</font>
+
+   The script `4.(optional)Pipeline_CAMERA.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+   
+   
+   
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+
+### Provide the polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+  
+
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+   
+### Read XCMSnExp object after conducting XCMS 🕵
+```{r eval=FALSE}
+path_rds_xcms_XCMSnExp <- "H:/From_SUND/Scripts/outputs/xcms_XCMSnExp_POS.rds" 
+```
+
+ 
+### Parameters for CAMERA 🕵
+#### Grouping 🕵
+```{r eval=FALSE}
+params <- list()
+params$perfwhm <- 0.6          #percentage of the width of the FWHM (full width at half maximum) of the peak
+params$group_intval <- "into"  #the type of intensity value
+params$sigma <- 6              #multiplier of the standard deviation
+```
+
+   
+   
+#### correlation 🕵
+```{r eval=FALSE}
+params$calcIso <- FALSE      #include isotope detection information for graph clustering
+params$calcCiS <- FALSE      #calculate correlation inside samples
+params$calsCaS <- TRUE       #calculate correlation across samples
+params$cor_eic_th <- 0.7     #correlation threshold for RIC correlation
+params$cor_exp_th <- 0.3     #threshold for intensity correlations across samples
+params$pval <- 1E-6          #p-value threshold for testing correlation of significance
+params$graphMethod <- "lpc"  #clustering method for resulting correlation graph (hcs, lpc)
+params$intval_cor <- "into"  #selection of the intensity values
+```
+
+   
+   
+#### find isotopes 🕵
+```{r eval=FALSE}
+params$find_isoto_ppm <- 10         #threshold for m/z
+params$mzabs <- 0.01                #allowed variance for the search
+params$find_isoto_intval <- "into"  #choose intensity values for C12/C13 check
+```
+
+   
+   
+   
+#### find adducts 🕵
+```{r eval=FALSE}
+params$find_addu_ppm <- 10    
+params$mzabs <- 0.01
+params$multiplier <- 4         #highest number(n) of allowed clusterion [nM+ion]
+   
+```
+
+
+   
+### Conduct CAMERA
+```{r eval=FALSE}
+source(paste0(path_utils_prepro, "/CAMERA.R"))
+     
+```
+
+    
+
+
+  
+   
+
+
+
+<!--chapter:end:01-MS2_preprocessing_untargeted.Rmd-->
+
+# MS2 preprocessing targeted
+Please copy the template of excel file which fits your data `LCMS_library_template1.xlsx` or `LCMS_library_template2.xlsx` under the folder `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\utils\utils_MS2_preprocessing\LCMS_library_template.xlsx` and fill in the information related to the standards which you would like to preprocess. You must fill the columns with the column name in red color. Regarding the filled filenames, they are without extension
+
+
+
+
+## XCMS_check retention time
+Check if the retention time of each standard from MS2 is similar to that from MS1
+
+The script `2b.Pipeline_XCMS_checkRT.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+### Provide polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+   
+   
+### Path of storing .mzML files without filenames 🕵
+```{r eval=FALSE}
+path_files_mzML <- "H:/From_SUND/Scripts/test/MS2pos_target/mzML_openms_MS2_POS"
+```
+   
+  
+
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+
+### Filename for containing information of standards including absolute path (Please fill in the provided template) as well as the sheet name 🕵
+```{r eval=FALSE}
+xlsx_std_info <- "H:/From_SUND/Projects/MP163/0220/INFO/LCMS_library_template.xlsx"
+xlsx_std_sheetname <- "compound_table"
+```
+   
+   
+   
+### Colname of retention time 🕵
+```{r eval=FALSE}
+colname_rt <- "Library.rt.RF" # or "Library.rt.HILLIC"
+```
+
+    
+
+   
+   
+### Threshold for retention time (minutes) and m/z for ploting chromatogram 🕵
+```{r eval=FALSE}
+thre_rt = 2
+thre_mz = 0.01
+
+```
+
+
+
+#### Conducting 
+```{r eval=FALSE}
+source(paste0(path_utils_prepro, "/XCMS_checkRT.R"))
+```
+
+   
+   
+  
+
+
+
+
+## Extraction of MS2-spectra
+<font color = "red">If you skip the previous step, please make sure the retention time to be as correct as possible and fill in information related to the standards in the excel file as mentioned in the previous step</font>
+
+The script `3b.Pipeline_extract_MS2_std.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
+
+
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+ 
+ 
+ 
+
+### Provide polarity 🕵
+```{r eval=FALSE}
+polarity <- "NEG"
+```
+   
+   
+   
+### Path of storing .mzML files without filenames 🕵
+```{r eval=FALSE}
+path_files_mzML <- "H:/From_SUND/Projects/MP163/0220/NEG/mzML_DA_NEG/mzML_openms_MS2_NEG"
+```
+
+  
+
+### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Projects/MP163/0220/outputs"
+```
+
+   
+
+### Absolute path of template with essential information of standards 🕵
+```{r eval=FALSE}
+xlsx_std_info <- "H:/From_SUND/Projects/MP163/0220/outputs_NEG/metadata_for_MS2.xlsx"
+```
+
+  
+   
+### colname of retention time 🕵
+```{r eval=FALSE}
+colname_rt <- "rt_detected" # or "Library.rt.RF" # or "Library.rt.HILLIC" 
+```
+
+
+   
+### Parameters for extracting MS2 spectra 🕵
+#### Extraction: Threshold of rt and m/z for extraction 🕵
+```{r eval=FALSE}
+params <- list()
+params$expandRt <- 5 #seconds
+params$expandMz <- 0.01
+```
+
+   
+   
+#### How many maximal number of scans you would like to keep for further getting combined spectrum for each std 🕵
+```{r eval=FALSE}
+n_scans <- 6 # (5 CEs * 6/ 1 CE * 3)
+```
+  
+   
+   
+#### Combining: Threshold of mz, proportion among all samples, type for combining, function for combining mz and intensity 🕵
+```{r eval=FALSE}
+#To get consensus spectra for each feature at each collision energy
+params$tolerance <- 0.005
+params$peaks <- "intersect"  #"union" #report all peaks from all input spectra 
+params$minProp <- 0.7
+params$intfun <- max
+params$mzfun <- median
+```
+
+
+
+### Conducting 
+```{r eval=FALSE}
+if (grepl("ku_00007", path_files_mzML)) {
+     
+     source("")
+     
+} else {source(paste0(path_utils_prepro, "/extract_MS2_std.R"))}
+```
+
+   
+   
+  
+   
+
+
+
+
+<!--chapter:end:02-MS2_preprocessing_targeted.Rmd-->
+
+# MS2-Annotation
+This chapter consists of: 
+
+1. Submit job of CMN and jobs based on CMN on GNPS (involved uploading files to the server of GNPS) 
+
+2. Submit job of FBMN and jobs based on FBMN on GNPS (involved uploading files to the server of GNPS)
+
+3. Download all results from all submitted jobs and merge into a large table  
+
+4. Compare MS2-experimental data with our in-house library 
+
+5. Merge the results obtained from each GNPS-job and library-match into one table
+
+
+
+
+
+## GNPS-Submit jobs based on CMN
+The script `1b.Pipeline_GNPS_upload_submitjobs_based on CMN.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+<div class="Keats">The pipeline is for:
+
+1.Uploading files to the server of GNPS.
+
+2.Generating parameters for each job you would like to run.
+
+3.Running CMN (classic molecular network) and a couple of other jobs based on CMN on GNPS.
+
+4.Changing the parameters related to the jobs you would like to run.
+
+5.Please pay attention to the filenames <font color = "red">**no space within each filename**</font>
+</div>
+
+
+
+### Upload files
+#### Source paths on the server and relevant function
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+source(paste0(path_func, "/files_by_FTP.R"))
+```
+
+ 
+
+#### Provide polarity (upper case) 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+  
+   
+
+#### Provide project information (only provide the value you want)🕵
+```{r eval=FALSE}
+project_name <- ""
+study <- ""
+sample_type <- ""
+omics <- ""
+method <- ""
+```
+
+   
+
+   
+#### Information related to run jobs on GNPS 🕵
+```{r eval=FALSE}
+username <- ""
+password <- ""
+host <- "massive.ucsd.edu"
+email <- ""
+```
+
+
+   
+#### Provide the path of storing files without filenames 🕵
+<font color = "red">To be sure only files from unique polarity for running CMN within the provided folder</font>
+```{r eval=FALSE}
+masterpath <- "H:/From_SUND/Scripts/test/mzML_openms_MS2_POS"
+```
+
+   
+   
+#### Upload files into server (FTP) \n(consistent with the parameters provided above)🕵
+```{r eval=FALSE}
+upload_file_FTP(  masterpath, 
+                  list.files(masterpath), 
+                  username, 
+                  password, 
+                  host, 
+                  project_name = project_name, 
+                  polarity     = polarity, 
+                  study        = study, 
+                  sample_type  = sample_type, 
+                  omics        = omics, 
+                  method       = method
+               )
+```
+
+
+
+
+### Prerequisites before generating parameters and submitting jobs 🕵
+!!! Run the chunk below whenever start running any job
+```{r eval=FALSE}
+#Provide the path for storing the lists of both parameters and job ids  
+path_outputs_params_jobids <- "H:/From_SUND/Scripts/outputs"
+
+
+#The two lines below are for storing all parameters related to the workflows you will run
+list_param_GNPS <- list()
+list_jobid_GNPS <- list()
+```
+
+
+
+
+### [CMN](https://ccms-ucsd.github.io/GNPSDocumentation/networking/) 
+#### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_CMN <- list()
+parameters_CMN["precursor_ion_mass_tolerance"] <- "0.02"
+parameters_CMN["fragment_ion_mass_tolerance"] <- "0.02"
+parameters_CMN["min_pairs_cos"] <- "0.7"
+parameters_CMN["minimum_matched_fragment_ions"] <- "6"
+parameters_CMN["maximum_shift"] <- "500"
+parameters_CMN["network_topk"] <- "10"
+parameters_CMN["minimum_cluster_size"] <- "2"
+parameters_CMN["run_mscluster"] <- "on" 
+parameters_CMN["maximum_connected_component_size"] <- "100"
+parameters_CMN["library_search_min_matched_peaks"] <- "6"
+parameters_CMN["score_threshold"] <- "0.7"
+parameters_CMN["search_analogs"] <- "0" 
+parameters_CMN["maximum_analog_search_mass_difference"] <- "100" 
+parameters_CMN["filter_below_std_dev"] <- "0.0"
+parameters_CMN["minimum_peak_intensity"] <- "0.0"
+parameters_CMN["filter_precursor_window"] <- "1"
+parameters_CMN["filter_library"] <- "1" 
+parameters_CMN["filter_peaks_10_50Da_window"] <- "1" 
+parameters_CMN["filter_spectra_from_G6_as_blanks_before_networking"] <- "0" 
+parameters_CMN["find_related_datasets"] <- "0" 
+parameters_CMN["create_cluster_buckets_and_qiime2_biom_pcoa_plots_output"] <- "1" 
+parameters_CMN["create_ili_mapping_output"] <- "0"
+```
+
+     
+
+#### Submit CMN
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+### [Dereplicator](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator/) 
+#### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_CMN_Dereplicator <- list()
+parameters_CMN_Dereplicator["precursor_ion_mass_tolerance"] <- "0.02"
+parameters_CMN_Dereplicator["search_analogs"] <- "on" # if you do not select, just leave it empty like ""
+parameters_CMN_Dereplicator["fragment_ion_mass_tolerance"] <- "0.02"
+parameters_CMN_Dereplicator["pnp_database"] <- "pnpdatabase" # "dmisam" for "Extended", "combined" for "Regular"
+parameters_CMN_Dereplicator["max_charge"] <- "2"
+parameters_CMN_Dereplicator["accurate_p_values"] <- "on" # leave it empty, like "", if you do not select it
+parameters_CMN_Dereplicator["min_number_of_AA"] <- "5"
+parameters_CMN_Dereplicator["max_isotopic_shift"] <- "0" # other options are "1", "2"
+parameters_CMN_Dereplicator["adducts_Na"] <- "" # if select, give the value like "on"
+parameters_CMN_Dereplicator["adducts_K"] <- ""  # if select, give the value like "on"
+parameters_CMN_Dereplicator["max_allowed_modification_mass"] <- "150" 
+parameters_CMN_Dereplicator["min_matched_peaks_with_known_compounds"] <- "5"
+```
+
+     
+#### Submit Dereplicator
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+### [Dereplicator plus](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator%2B/) 
+#### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_CMN_Dereplicator_plus <- list()
+parameters_CMN_Dereplicator_plus["precursor_ion_mass_tolerance"] <- "0.02"
+parameters_CMN_Dereplicator_plus["fragment_ion_mass_tolerance"] <- "0.02"
+parameters_CMN_Dereplicator_plus["max_charge"] <- "2" # other options are 1 and 3
+parameters_CMN_Dereplicator_plus["min_score"] <- "12"
+```
+
+     
+#### Submit Dereplicator plus
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+ 
+
+### [NAP](https://ccms-ucsd.github.io/GNPSDocumentation/nap/) 
+#### Generate parameters 🕵  
+<font color = "red">\*parameters are different from different polarities</font>
+```{r eval=FALSE}
+parameters_CMN_NAP <- list()
+parameters_CMN_NAP["number_of_a_cluster_index"] <- "0"
+parameters_CMN_NAP["cosine_value_to_subselect_inside_a_cluster"] <- "0.7" 
+parameters_CMN_NAP["n_first_candidates_for_consensus_score"] <- "10"
+parameters_CMN_NAP["use_fusion_result_for_consensus"] <- "on" # if deselect, ""
+parameters_CMN_NAP["accuracy_for_exact_mass_candidate_search_ppm"] <- "15"
+parameters_CMN_NAP["structure_database"] <- "GNPS,HMDB,SUPNAT,NPAtlas,CHEBI,DRUGBANK,FooDB" 
+parameters_CMN_NAP["maximum_number_of_candidate_structures_in_the_graph"] <- "10"
+```
+
+     
+<font color = "red">Be careful the inputs of parameters depending on the polarity, so only change the inputs related to the polarity you are working on</font>
+
+```{r eval=FALSE}
+if (polarity == "POS") {
+  
+  parameters_CMN_NAP["acquisition_mode"] <- "Positive"
+  parameters_CMN_NAP["adduct_ion_type"] <- "[M+H]" # other options are "[M]","[M+NH4]","[M+Na]","[M+K]", "[M+ACN+H]" 
+  parameters_CMN_NAP["multiple_adduct_types"] <- "[M+Na]" 
+
+  } else if (polarity == "NEG") {
+    parameters_CMN_NAP["acquisition_mode"] <- "Negative" 
+    parameters_CMN_NAP["adduct_ion_type"] <- "[M-H]" # other options are "[M+Cl]", "[M+FA-H]"
+    parameters_CMN_NAP["multiple_adduct_types"] <- "[M+Cl]"
+                
+  }   
+```
+
+      
+#### Submit NAP
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+ 
+  
+### [MS2LDA](https://ccms-ucsd.github.io/GNPSDocumentation/ms2lda/) 
+#### Generate parameters 🕵  
+
+<font color = "red">If the polarity is negative mode, recommend to exclude all motif by changing values from "yes" to "no" </font>
+
+
+```{r eval=FALSE}
+parameters_CMN_MS2LDA <- list()
+parameters_CMN_MS2LDA["bin_width"] <- "0.01" #other options are 0.005, 0.05, 0.1, 0.5
+parameters_CMN_MS2LDA["number_of_lda_iterations"] <- "1000"
+parameters_CMN_MS2LDA["minimum_ms2_intensity"] <- "100"
+parameters_CMN_MS2LDA["lda_free_motifs"] <- "200"
+parameters_CMN_MS2LDA["gnps_motif_inclusion"] <- "yes" #if deselect, "no"
+parameters_CMN_MS2LDA["massbank_motif_inclusion"] <- "yes"
+parameters_CMN_MS2LDA["urine_motif_inclusion"] <- "yes" 
+parameters_CMN_MS2LDA["euphorbia_motif_inclusion"] <- "no"
+parameters_CMN_MS2LDA["rhamnaceae_plant_motif_inclusion"] <- "no"
+parameters_CMN_MS2LDA["streptomyces_and_salinisporus_motif_inclusion"] <- "no"
+parameters_CMN_MS2LDA["photorhabdus_and_xenorhabdus_motif_inclusion"] <- "no" 
+parameters_CMN_MS2LDA["user_motif_inclusion"] <- "None" 
+parameters_CMN_MS2LDA["overlap_score_threshold"] <- "0.3"
+parameters_CMN_MS2LDA["probability_value_threshold"] <- "0.1"
+parameters_CMN_MS2LDA["topx_in_node"] <- "5" 
+```
+
+     
+#### Submit MS2LDA  
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+### [MNE (MolNetEnhancer)](https://ccms-ucsd.github.io/GNPSDocumentation/molnetenhancer/)
+#### Generate parameters 🕵  
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
+parameters_CMN_MNE <- list()
+parameters_CMN_MNE["enter_varquest_id"] <- "None"    # leave it as "None" if this id is not available 
+
+parameters_CMN_MNE["enter_nap_id"] <- list_jobid_GNPS$CMN_NAP_task_id  
+parameters_CMN_MNE["enter_gnps_task_id"] <- list_jobid_GNPS$CMN_task_id
+parameters_CMN_MNE["enter_Dereplicator_id"] <- list_jobid_GNPS$CMN_Dereplicator_task_id
+parameters_CMN_MNE["enter_ms2lda_job_id"] <- list_jobid_GNPS$CMN_MS2LDA_task_id  #Leave it as "None" if this id is not available
+```
+
+
+#### Submit MNE
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+
+
+
+### [Merge network polarity](https://ccms-ucsd.github.io/GNPSDocumentation/mergepolarity/)
+#### Generate parameters 🕵
+
+<font color = "red">If it is CMN-based network, the unit of tolerance of rt is **second** </font>
+```{r eval=FALSE}
+list_param_jobid_MNP <- list()
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
+
+parameters_CMN_MNP <- list()
+parameters_CMN_MNP["enter_gnps_positive_network_task_id"] <- list_jobid_MN_both$CMN_task_id_POS    
+parameters_CMN_MNP["enter_gnps_negative_network_task_id"] <- list_jobid_MN_both$CMN_task_id_NEG    
+parameters_CMN_MNP["enter_a_rt_tolerance_for_aligning_masses_between_two_runs"] <- 10
+parameters_CMN_MNP["enter_a_ppm_tolerance_for_aligning_masses_between_two_runs"] <- 30 
+```
+
+
+#### Merge polarities
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+
+
+
+
+
+
+## GNPS-Submit jobs based on FBMN
+You only need to prepare a reprocessed MS2-spectra as the format of `.mgf` and the corresponding quantification table as the format of `.txt` or `.csv`
+
+<font color = "red">1. Not recommend to preprocess MS2 data by metaboscape. Because 1) Regarding .mgf file, the output is average MS2 spectra across multiple CEs; 2) Regarding .csv file, m/z is not correct</font>
+
+<font color = "red">2. Change the parameters in the sections below related to the workflows you would like to run</font>
+
+
+### Form quantification table
+   The script `0b.Pipeline_quan_table.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+   
+#### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+ 
+
+#### Provide the polarity 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+ 
+
+   
+#### Path of storing outputs 🕵
+```{r eval=FALSE}
+path_output <- "H:/From_SUND/Scripts/outputs"
+```
+
+  
+   
+#### Path of extracted MS2 spectra 🕵
+```{r eval=FALSE}
+path_rds_expMS2 <- "H:/From_SUND/Scripts/outputs/exp_MS2_POS.rds" 
+```
+
+   
+   
+#### Path of object after conducting XCMS 🕵
+```{r eval=FALSE}
+path_rds_xcms_XCMSnExp <- "H:/From_SUND/Scripts/outputs/xcms_XCMSnExp_POS.rds" 
+```
+  
+   
+   
+#### (Optional) Path of object CAMERA (if conduct CAMERA) ✈️
+<font color = "red">If you have run CAMERA, please provide the path, otherwise, skip running the line below</font>
+```{r eval=FALSE}
+path_rds_cam_xsAnnotate <- "H:/From_SUND/Scripts/outputs/cam_xsAnnotate_POS.rds" 
+```
+
+
+
+#### Conduct to get quantification table for FBMN on GNPS
+```{r eval=FALSE}
+if (exists("path_rds_cam_xsAnnotate")) {
+  
+  #Type of intensity value to extract from object of xcms_XCMSnExp
+  feature_int <- "into"
+     
+}
+   
+   
+source(paste0(path_utils_annotation, "/quan_table.R"))
+```
+
+
+
+
+
+
+### Upload files, generate parameters, and submit jobs
+The script `1b.Pipeline_GNPS_upload_submitjobs_based on FBMN.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+<div class="Keats">The pipeline is for:
+
+1.Uploading files to the server of GNPS. 
+
+2.Generating parameters for each job you would like to run.
+
+3.Running FBMN (feature based molecular network) and a couple of other jobs based on FBMN on GNPS. 
+
+<font color = "red">4.Changing the parameters related to the jobs you would like to run.</font>
+</div>
+
+
+
+#### Upload files
+##### Source paths on the server and relevant function
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+source(paste0(path_func, "/files_by_FTP.R"))
+```
+
+
+
+##### Provide polarity (upper case) 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+   
+   
+   
+##### Provide project information 🕵
+```{r eval=FALSE}
+project_name <- "workflow_test" 
+study <- "1"            #what ordinal number comes current samples? e.g. "1", or "2",...
+sample_type <- "serum"
+omics <- "metabolomics"
+method <- "RP"
+```
+
+   
+   
+##### Information related to run jobs on GNPS or computer room 🕵
+```{r eval=FALSE}
+username <- "xx"
+password <- "xx"
+host <- "massive.ucsd.edu"
+email <- "xx"
+```
+
+      
+   
+##### Provide the path of storing files without filenames  🕵
+```{r eval=FALSE}
+masterpath <- "H:/From_SUND/Scripts/outputs"
+```
+
+    
+
+
+##### Provide the filenames 🕵
+`.txt` or `.csv`of quantification table and `.mgf` file of MS2 spectra 
+```{r eval=FALSE}
+filenames <- c("quantable_POS.txt", "exp_MS2_POS.mgf")
+
+```
+
+
+
+##### Provide method you used for preprocessing the MS2-spectra data 🕵
+```{r eval=FALSE}
+prep_method <- "XCMS3" #other options are illustrated within the function in the file of "submit_jobs_to_GNPS.R"
+```
+
+
+
+##### Upload files into server (FTP)
+```{r eval=FALSE}
+upload_file_FTP(  masterpath, 
+                  filenames, 
+                  username, 
+                  password, 
+                  host, 
+                  project_name,
+                  polarity, 
+                  study       = study, 
+                  sample_type = sample_type, 
+                  omics       = omics, 
+                  method      = method
+               )
+```
+  
+  
+
+
+#### Prerequisites before generating parameters and submitting jobs 🕵
+```{r eval=FALSE}
+#Provide the path for storing the lists of both parameters and job ids  
+path_outputs_params_jobids <- "H:/From_SUND/Scripts/outputs"
+
+
+#The two lines below are for storing all parameters related to the workflows you will run
+list_param_GNPS <- list()
+list_jobid_GNPS <- list()
+```
+
+
+
+
+#### [FBMN](https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking/)
+##### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_FBMN <- list()
+parameters_FBMN["precursor_ion_mass_tolerance"] <- "0.02"
+parameters_FBMN["fragment_ion_mass_tolerance"] <- "0.02"
+parameters_FBMN["min_pairs_cos"] <- "0.7"
+parameters_FBMN["minimum_matched_fragment_ions"] <- "6"
+parameters_FBMN["maximum_shift"] <- "500"
+parameters_FBMN["network_topk"] <- "10"
+parameters_FBMN["maximum_connected_component_size"] <- "100"
+parameters_FBMN["library_search_min_matched_peaks"] <- "6"
+parameters_FBMN["score_threshold"] <- "0.7"
+parameters_FBMN["search_analogs"] <- "0" # don't search/ "1" search
+parameters_FBMN["maximum_analog_search_mass_difference"] <- "100" # it only works once select the search analog
+parameters_FBMN["top_results_to_report_per_query"] <- "1"
+parameters_FBMN["minimum_peak_intensity"] <- "0.0"
+parameters_FBMN["filter_precursor_window"] <- "1" # filter / "0" don't filter
+parameters_FBMN["filter_library"] <- "1" # filter / "0" don't filter
+parameters_FBMN["filter_peaks_10_50Da_window"] <- "1" # filter / "0" don't filter
+parameters_FBMN["normalization_per_file"] <- "None" # represent no normalization, the other option is "RowSum"
+parameters_FBMN["aggregation_method_for_peak_abundances_per_group"] <- "Mean" # another option is "Sum"
+parameters_FBMN["pcoa_distance_metric"] <- "cosine" # other options are "braycurtis", "euclidean", "jaccard"
+parameters_FBMN["metadata_column_to_compare"] <- "None"
+parameters_FBMN["run_stats_and_plots"] <- "No" # other option is "Yes"
+parameters_FBMN["metadata_field_to_compare_1"] <- "None"
+parameters_FBMN["metadata_field_to_compare_2"] <- "None"
+parameters_FBMN["metadata_column_to_facet"] <- "None"
+parameters_FBMN["run_Dereplicator"] <- "1" # "0" represent don't run and "1" represents run
+```
+
+
+##### Submit FBMN
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+     
+      
+#### [Dereplicator plus](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator%2B/)
+##### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_FBMN_Dereplicator_plus <- list()
+parameters_FBMN_Dereplicator_plus["precursor_ion_mass_tolerance"] <- "0.02"
+parameters_FBMN_Dereplicator_plus["fragment_ion_mass_tolerance"] <- "0.02"
+parameters_FBMN_Dereplicator_plus["max_charge"] <- "2" # other options are 1 and 3
+parameters_FBMN_Dereplicator_plus["min_score"] <- "12"
+```
+
+
+##### Submit Dereplicator plus
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+     
+  
+    
+
+#### [NAP](https://ccms-ucsd.github.io/GNPSDocumentation/nap/)
+<font color = "red">\*parameters are different from different polarities</font>
+
+##### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_FBMN_NAP <- list()
+parameters_FBMN_NAP["number_of_a_cluster_index"] <- "0"
+parameters_FBMN_NAP["cosine_value_to_subselect_inside_a_cluster"] <- "0.7" 
+parameters_FBMN_NAP["n_first_candidates_for_consensus_score"] <- "10"
+parameters_FBMN_NAP["use_fusion_result_for_consensus"] <- "on" # if deselect, ""
+parameters_FBMN_NAP["accuracy_for_exact_mass_candidate_search_ppm"] <- "15"
+parameters_FBMN_NAP["structure_database"] <- "GNPS,HMDB,SUPNAT,NPAtlas,CHEBI,DRUGBANK,FooDB" 
+parameters_FBMN_NAP["maximum_number_of_candidate_structures_in_the_graph"] <- "10"
+```
+
+     
+<font color = "red">Be careful the inputs of parameters depending on the polarity, so only change the inputs related to the polarity you are working on</font>
+```{r eval=FALSE}
+if (polarity == "POS") {
+  
+  parameters_FBMN_NAP["acquisition_mode"] <- "Positive"
+  parameters_FBMN_NAP["adduct_ion_type"] <- "[M+H]" # other options are "[M]", "[M+NH4]", "[M+Na]", "[M+K]", "[M+ACN+H]" 
+  parameters_FBMN_NAP["multiple_adduct_types"] <- "[M+Na]" 
+
+} else if (polarity == "NEG") {
+  
+  parameters_FBMN_NAP["acquisition_mode"] <- "Negative" 
+  parameters_FBMN_NAP["adduct_ion_type"] <- "[M-H]" # other options are "[M+Cl]", "[M+FA-H]"
+  parameters_FBMN_NAP["multiple_adduct_types"] <- "[M+Cl]"
+                
+}  
+```
+
+
+##### Submit NAP
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+     
+
+
+
+#### (Optional) [MS2LDA](https://ccms-ucsd.github.io/GNPSDocumentation/ms2lda/) ✈️ 
+##### Generate parameters 🕵
+```{r eval=FALSE}
+parameters_FBMN_MS2LDA <- list()
+parameters_FBMN_MS2LDA["bin_width"] <- "0.01" #other options are 0.005, 0.05, 0.1, 0.5
+parameters_FBMN_MS2LDA["number_of_lda_iterations"] <- "1000"
+parameters_FBMN_MS2LDA["minimum_ms2_intensity"] <- "100"
+parameters_FBMN_MS2LDA["lda_free_motifs"] <- "200"
+parameters_FBMN_MS2LDA["gnps_motif_inclusion"] <- "yes" #if deselect, "no"
+parameters_FBMN_MS2LDA["massbank_motif_inclusion"] <- "yes"
+parameters_FBMN_MS2LDA["urine_motif_inclusion"] <- "yes" 
+parameters_FBMN_MS2LDA["euphorbia_motif_inclusion"] <- "no"
+parameters_FBMN_MS2LDA["rhamnaceae_plant_motif_inclusion"] <- "no"
+parameters_FBMN_MS2LDA["streptomyces_and_salinisporus_motif_inclusion"] <- "no"
+parameters_FBMN_MS2LDA["photorhabdus_and_xenorhabdus_motif_inclusion"] <- "no" 
+parameters_FBMN_MS2LDA["user_motif_inclusion"] <- "None" 
+parameters_FBMN_MS2LDA["overlap_score_threshold"] <- "0.3"
+parameters_FBMN_MS2LDA["probability_value_threshold"] <- "0.1"
+parameters_FBMN_MS2LDA["topx_in_node"] <- "5" 
+```
+
+
+##### Submit MS2LDA 
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+  
+  
+#### [MNE (MolNetEnhancer)](https://ccms-ucsd.github.io/GNPSDocumentation/molnetenhancer/)
+##### Generate parameters 🕵  
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
+parameters_FBMN_MNE <- list()
+parameters_FBMN_MNE["enter_varquest_id"] <- "None"    # leave it as "None" if this id is not available 
+
+
+parameters_FBMN_MNE["enter_nap_id"] <- list_jobid_GNPS$FBMN_NAP_task_id
+parameters_FBMN_MNE["enter_gnps_task_id"] <- list_jobid_GNPS$FBMN_task_id
+parameters_FBMN_MNE["enter_ms2lda_job_id"] <- list_jobid_GNPS$FBMN_MS2LDA_task_id # or "None"
+```
+``
+   
+   
+
+##### Submit MNE
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+ 
+
+
+### [Merge network polarity](https://ccms-ucsd.github.io/GNPSDocumentation/mergepolarity/)
+#### Generate parameters 🕵
+
+<font color = "red">If it is FBMN-based network, the unit of tolerance of rt is **minute** </font>
+```{r eval=FALSE}
+list_param_jobid_MNP <- list()
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+
+
+parameters_FBMN_MNP <- list()
+parameters_FBMN_MNP["enter_gnps_positive_network_task_id"] <- list_jobid_MN_both$FBMN_task_id_POS    
+parameters_FBMN_MNP["enter_gnps_negative_network_task_id"] <- list_jobid_MN_both$FBMN_task_id_NEG    
+parameters_FBMN_MNP["enter_a_rt_tolerance_for_aligning_masses_between_two_runs"] <- 0.1
+parameters_FBMN_MNP["enter_a_ppm_tolerance_for_aligning_masses_between_two_runs"] <- 20 
+```
+
+
+#### Merge polarities
+```{r eval=FALSE}
+source(paste0(path_utils_annotation, "/GNPS_upload_submitjobs.R"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## GNPS-Download jobs 
+The script `2.Pipeline_GNPS_download_jobs.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+### Source paths on the server 🕵
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+ 
+
+
+### Provide polarity (upper case) 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+
+
+### Provide the path of storing downloaded files 🕵
+```{r eval=FALSE}
+download_path <- "H:/From_SUND/Scripts/outputs"
+```
+   
+
+
+### Provide project information (only run the line with value you provide)🕵
+```{r eval=FALSE}
+project_name <- ""
+study <- ""
+sample_type <- ""
+omics <- ""
+method <- ""
+```
+
+   
+
+### Provide the absolute path of "list of job ids" by including the name of that list 🕵
+<font color = "red">name should start with **list_jobid_GNPS**</font>
+```{r eval=FALSE}
+path_list <- "H:/From_SUND/Scripts/outputs/jobids_CMN_based_workflow_test_1_serum_metabolomics_RF_POS.rds"
+```
+
+ 
+
+### Download results from the list of job ids
+```{r eval=FALSE}
+list_jobid_GNPS <- readRDS(path_list)
+source(paste0(path_utils_annotation, "/GNPS_downloadjobs.R"))
+```
+   
+      
+      
+      
+### Provide the absolute path of "list_param_jobid_MNP" by including the name of that list 🕵
+<font color = "red">name should start with **list_param_jobid_MNP**</font>
+```{r eval=FALSE}
+path_jobid_MNP <- "H:/From_SUND/Scripts/outputs/list_param_jobid_MNP_xx_both.rds"
+```
+
+
+
+### Download result of merging networks from both polarities
+```{r eval=FALSE}
+list_jobid_GNPS <- readRDS(path_jobid_MNP)
+source(paste0(path_utils_annotation, "/GNPS_downloadjobs.R"))
+```
+   
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## MS2-inhouse-library v.s. experimental data
+The script `1c.Pipeline_exp_vs_lib.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide polarity (upper case) 🕵
+```{r eval=FALSE}
+polarity <- "POS" # "POS" "NEG"
+```
+ 
+   
+   
+### Provide path of preprocessed MS2-spectra file 🕵
+<font color = "red">It is the absolute path by including the file name as the format of `*.mgf`</font>
+```{r eval=FALSE}
+path_mgf_expMS2 <- "H:/From_SUND/Scripts/outputs/exp_MS2_POS.mgf"
+```
+  
+
+   
+### provide the thresholds 🕵
+They are for m/z and similarity score which is used for cutting off the matches with the scores lower than the threshold
+```{r eval=FALSE}
+mz_threshold <- 0.01
+cor_threshold <- 0.7
+```
+
+   
+   
+### Provide the path of storing output 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+
+### (Optional) Provide the method for comparison ✈️
+<div class="Keats"> The default method is `cp_method <- "cosine"`  you could also try other methods for comparison "nspecanglescore", "navdistscore", or "neuclideanscore"</div>
+```{r eval=FALSE}
+cp_method <- "cosine"
+```
+
+
+
+
+### Conduct
+```{r eval=FALSE}
+if (polarity == "POS") {
+  
+  path_lib_MS2 <- paste0(path_MS2_lib, "/RP_lib_MS2_60_POS.mgf")
+  
+} else if (polarity == "NEG") {
+    
+  path_lib_MS2 <- paste0(path_MS2_lib, "/RP_lib_MS2_60_NEG.mgf")
+}
+ 
+source(paste0(path_func, "/lib_vs_exp_MS2.R"))
+
+MS2_vs_exp(path_lib_MS2, path_mgf_expMS2, mz_threshold, cor_threshold, polarity, path_outputs, cp_method)
+```
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Merge results from different source
+### Merging outputs from jobs have run on GNPS into a table
+The script `3.Pipeline_merge_outputs_from_GNPS.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+
+#### Source paths on the server and relevant function 
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+source(paste0(path_func, "/Merge_outputs_from_GNPS.R"))
+```
+
+ 
+
+#### Provide the path of storing files downloaded from GNPS 🕵
+<font color = "red">The path should be end with **gnps_outputs**</font>
+```{r eval=FALSE}
+path_downloaded_files <- "H:/From_SUND/Scripts/outputs/workflow_test_1_serum_metabolomics_RF/gnps_outputs"
+```
+
+
+
+#### Provide the absolute path of "list of job ids" by including the name of that list  🕵
+<font color = "red">name should start with **list_jobid_GNPS**</font>
+```{r eval=FALSE}
+path_list <- "H:/From_SUND/Scripts/outputs/jobids_CMN_workflow_test_1_serum_metabolomics_RF_POS.rds"
+
+```
+
+
+
+#### Provide path for storing the merged result 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```  
+
+
+
+#### Provide which method did you use for preprocessing MS2 data 🕵
+<font color = "red">If you run jobs based on CMN, skip running the line below</font>
+```{r eval=FALSE}
+prep_method <- "XCMS3"
+```
+
+
+
+#### Provide polarity (upper case) 🕵
+```{r eval=FALSE}
+polarity <- "POS"
+```
+
+
+#### Provide what workflow based 🕵
+```{r eval=FALSE}
+workflow_based <- "CMN" # or "FBMN"
+```
+
+
+#### Conduct
+```{r eval=FALSE}
+library(dplyr)
+
+list_jobid <- readRDS(path_list)
+workflow_all <- names(list_jobid) %>% gsub("_task_id", "",.) 
+workflow <- workflow_all[grepl(workflow_based, workflow_all)] %>% strsplit("[A-Z]+_") %>% unlist() %>% unique() %>% na_if("") %>% na.omit() 
+
+if (workflow_based == "FBMN") {
+  
+  Merge_outputs_from_GNPS(path_downloaded_files, prep_method, workflow, polarity, path_outputs)
+  
+} else if (workflow_based == "CMN") {
+  
+  Merge_outputs_from_GNPS(path_downloaded_files, NULL, workflow, polarity, path_outputs)
+  
+}
+
+
+```
+
+
+   
+
+
+
+
+
+#### Merge library-match into GNPS-match
+The script `4.Pipeline_merge_lib-match_GNPS-match.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+<font color = "red"> It is more precise to merge the result from library-match with the results from FBMN-based jobs on GNPS</font>
+
+
+##### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+##### Provide path of excel file of storing matched records and sheet names 🕵
+The file name should be like `MS2-match-outputs.xlsx` and please provide the absolute path
+```{r eval = FALSE}
+path_MS2_match <- "H:/From_SUND/Scripts/outputs/MS2-match-outputs.xlsx"
+sheetName_GNPS <- "GNPS_summary_based_FBMN_POS"
+sheetName_lib <- "MS2-lib-vs-exp_cosine_POS"
+```
+
+
+
+##### Provide the polarity (upper case) 🕵
+```{r eval = FALSE}
+polarity <- "POS"
+```
+
+
+
+##### Provide the path for storing output 🕵
+```{r eval = FALSE}
+path_output <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+
+##### Conduct
+```{r eval = FALSE}
+source(paste0(path_utils_annotation, "/merge_lib-match_GNPS-match.R"))
+```
+
+      
+
+<!--chapter:end:03-MS2_Annotation.Rmd-->
+
+# Small tools
+This chapter consists of: 
+
+1. Among compound name, if you have any one as identifier (PubChem id (cid), KEEG id, HMDB, CAS), you will get the rest of them and corresponding chemical properties related to this compound
+
+
+<font color = "red">Copy excel file under the folder of **utils_DBs_api**, replace the context of identifier as yours. e.g. If your identifier is PubChem_CID, choose the sheet name as PubChem_CID, replace the context of PubChem_CID numbers as yours</font>
+
+
+
+
+## Play with various ids
+The script `DBs_ids_properties.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules`
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide identifier for grabbing other information 🕵
+<font color = "red">You have to choose one from these 5 options **("PubChem_CID", "Compound_Name", "KEGG", "CAS", "HMDB")**</font>
+```{r eval=FALSE}
+identifier <- "PubChem_CID" 
+```
+
+
+
+### Provide filename and sheetname for searching other information 🕵
+absolute path
+```{r eval=FALSE}
+filename_xlsx <- "H:/From_SUND/Scripts/test/test_DB_ids.xlsx"
+```
+
+
+
+### What properties you would like to get 🕵
+You could find other options from function `get_info_based_cid_to_xlsx.R` under the folder of containing functions
+```{r eval=FALSE}
+properties <- c("IUPACName", "InChIKey", "CanonicalSMILES", "MonoisotopicMass")
+```
+
+
+### Provide the path for containing output 🕵
+```{r eval=FALSE}
+path_output <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+### Conduct 
+```{r eval=FALSE}
+source(paste0(path_utils_DBs_api, "/DBs_api.R"))
+
+```
+
+
+
+
+
+      
+
+<!--chapter:end:04-Small_tools.Rmd-->
+
+# Troubleshooting
+
+## FTP (transfer local files to server of GNPS)
+1. When upload files via FTP, meet the error "Unrecognized CURL options: connectiontimeout"
+
+   **Solution**: 
+     wait for a while and run the codes again. Or try to open the software "WinSCP" to see whether it works manually.
+
+
+
+## Download files from GNPS platform
+1. Warning: cannot open file 'xx.zip': No such file or directory Error infile(file.path(outputs_folder, paste0(workflow, ".zip")), "wb") : cannot open the connection
+
+   **Solution**: 
+     1. assign $download\_path$ with C/: drive instead H/: or J/: drive
+
+     2. or remove "recursive = TRUE"
+
+<!--chapter:end:05-Troubleshooting.Rmd-->
+

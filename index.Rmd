@@ -26,7 +26,7 @@ site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 ```{r Flow chart for MS2-untargeted and -targeted workflow, echo=FALSE}
 
 knitr::include_graphics(c("images/flow_chart_MS2_untarget.png",
-                          "images/flow_chart_MS2_target.jpg"))
+                          "images/flow_chart_MS2_target.png"))
 
 
 
