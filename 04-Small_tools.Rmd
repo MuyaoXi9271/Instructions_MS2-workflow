@@ -1,7 +1,7 @@
 # Small tools
 This chapter consists of: 
 
-1. Among compound name, if you have any one as identifier (PubChem id (cid), KEEG id, HMDB, CAS), you will get the rest of them and corresponding chemical properties related to this compound
+Among compound name, if you have any one as identifier (PubChem id (cid), KEEG id, HMDB, CAS), you will get the rest of them and corresponding chemical properties related to this compound
 
 
 <font color = "red">Copy excel file under the folder of **utils_DBs_api**, replace the context of identifier as yours. e.g. If your identifier is PubChem_CID, choose the sheet name as PubChem_CID, replace the context of PubChem_CID numbers as yours</font>

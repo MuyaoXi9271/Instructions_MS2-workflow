@@ -9,11 +9,11 @@ site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 
 1. Download **OpenMS** <a href="https://abibuilder.cs.uni-tuebingen.de/archive/openms/OpenMSInstaller/release/" target="blank"></a> for converting the format of MS2-files 
 
-2. (optional) Download **WinSCP** <a href="https://winscp.net/eng/downloads.php></a> for transferring local files to server of GNPS
+2. (optional) Download [**WinSCP**]("https://winscp.net/eng/downloads.php) for transferring local files to server of GNPS
 
 3. Export MS2-files as .mzML from $dataanalysis$
 
-4. In order to install all essential packages, please run script **set_up_enviroment.R** under the folder of **J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\utils\\utils_MS2_set_up** before doing any step
+4. In order to install all essential packages, please run script **set_up_enviroment.R** under the folder of **J:\\CBMR\\SUN-CBMR-Metabolomics\\Workflow\\Scripts\\utils\\utils_MS2_set_up** before doing any step
 
 5. If you would like to use tools on GNPS, please register for your personal username and password
 
