@@ -7,9 +7,9 @@ site: "https://muyaoxi9271.github.io/Instructions_MS2-workflow/"
 
 # Prerequisites 
 
-1. Download **OpenMS** <a href="https://abibuilder.cs.uni-tuebingen.de/archive/openms/OpenMSInstaller/release/" target="blank"></a> for converting the format of MS2-files 
+1. Download [**OpenMS**]("https://abibuilder.cs.uni-tuebingen.de/archive/openms/OpenMSInstaller/release/") for converting the format of MS2-files 
 
-2. (optional) Download [**WinSCP**]("https://winscp.net/eng/downloads.php) for transferring local files to server of GNPS
+2. (optional) Download [**WinSCP**]("https://winscp.net/eng/downloads.php) for transferring local files to the server of GNPS
 
 3. Export MS2-files as .mzML from $dataanalysis$
 
