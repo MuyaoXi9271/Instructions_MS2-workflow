@@ -14,6 +14,90 @@ This chapter consists of:
 
 
 
+## MS2-inhouse-library v.s. experimental data
+The script `1c.Pipeline_exp_vs_lib.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
+
+
+### Source paths on the server
+```{r eval=FALSE}
+source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
+```
+
+
+
+### Provide polarity (upper case) 🕵
+```{r eval=FALSE}
+polarity <- "POS" # "POS" "NEG"
+```
+ 
+   
+   
+### Provide path of preprocessed MS2-spectra file 🕵
+<font color = "red">It is the absolute path by including the file name as the format of `*.mgf`</font>
+```{r eval=FALSE}
+path_mgf_expMS2 <- "H:/From_SUND/Scripts/outputs/exp_MS2_POS.mgf"
+```
+  
+
+   
+### provide the thresholds 🕵
+They are for m/z and similarity score which is used for cutting off the matches with the scores lower than the threshold
+```{r eval=FALSE}
+mz_threshold <- 0.01
+cor_threshold <- 0.7
+```
+
+   
+   
+### Provide the path of storing output 🕵
+```{r eval=FALSE}
+path_outputs <- "H:/From_SUND/Scripts/outputs"
+```
+
+
+
+### (Optional) Provide the method for comparison ✈️
+<div class="Keats"> The default method is `cp_method <- "cosine"`  you could also try other methods for comparison "nspecanglescore", "navdistscore", or "neuclideanscore"</div>
+```{r eval=FALSE}
+cp_method <- "cosine"
+```
+
+
+
+
+### Conduct
+```{r eval=FALSE}
+if (polarity == "POS") {
+  
+  path_lib_MS2 <- paste0(path_MS2_lib, "/RP_lib_MS2_60_POS.mgf")
+  
+} else if (polarity == "NEG") {
+    
+  path_lib_MS2 <- paste0(path_MS2_lib, "/RP_lib_MS2_60_NEG.mgf")
+}
+ 
+source(paste0(path_func, "/lib_vs_exp_MS2.R"))
+
+MS2_vs_exp(path_lib_MS2, path_mgf_expMS2, mz_threshold, cor_threshold, polarity, path_outputs, cp_method)
+```
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## GNPS-Submit jobs based on CMN
 The script `1b.Pipeline_GNPS_upload_submitjobs_based on CMN.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
@@ -777,91 +861,6 @@ source(paste0(path_utils_annotation, "/GNPS_downloadjobs.R"))
 ```
    
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## MS2-inhouse-library v.s. experimental data
-The script `1c.Pipeline_exp_vs_lib.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_Annotation`
-
-
-### Source paths on the server
-```{r eval=FALSE}
-source("H:/From_SUND/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
-```
-
-
-
-### Provide polarity (upper case) 🕵
-```{r eval=FALSE}
-polarity <- "POS" # "POS" "NEG"
-```
- 
-   
-   
-### Provide path of preprocessed MS2-spectra file 🕵
-<font color = "red">It is the absolute path by including the file name as the format of `*.mgf`</font>
-```{r eval=FALSE}
-path_mgf_expMS2 <- "H:/From_SUND/Scripts/outputs/exp_MS2_POS.mgf"
-```
-  
-
-   
-### provide the thresholds 🕵
-They are for m/z and similarity score which is used for cutting off the matches with the scores lower than the threshold
-```{r eval=FALSE}
-mz_threshold <- 0.01
-cor_threshold <- 0.7
-```
-
-   
-   
-### Provide the path of storing output 🕵
-```{r eval=FALSE}
-path_outputs <- "H:/From_SUND/Scripts/outputs"
-```
-
-
-
-### (Optional) Provide the method for comparison ✈️
-<div class="Keats"> The default method is `cp_method <- "cosine"`  you could also try other methods for comparison "nspecanglescore", "navdistscore", or "neuclideanscore"</div>
-```{r eval=FALSE}
-cp_method <- "cosine"
-```
-
-
-
-
-### Conduct
-```{r eval=FALSE}
-if (polarity == "POS") {
-  
-  path_lib_MS2 <- paste0(path_MS2_lib, "/RP_lib_MS2_60_POS.mgf")
-  
-} else if (polarity == "NEG") {
-    
-  path_lib_MS2 <- paste0(path_MS2_lib, "/RP_lib_MS2_60_NEG.mgf")
-}
- 
-source(paste0(path_func, "/lib_vs_exp_MS2.R"))
-
-MS2_vs_exp(path_lib_MS2, path_mgf_expMS2, mz_threshold, cor_threshold, polarity, path_outputs, cp_method)
-```
-
- 
-
-
 
 
 
