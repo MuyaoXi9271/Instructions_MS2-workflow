@@ -6,7 +6,7 @@ The script `1.Pipeline_extension_format_converter.R` is available under the fold
 
 ## Source paths on the server
 ```{r eval=FALSE}
-source("J:/CBMR/SUN-CBMR-Metabolomics/Workflow_MS2/utils/utils_MS2_set_up/set_up_paths.R")
+source("J:/CBMR/SUN-CBMR-Metabolomics/Workflow_MS2/Scripts/utils/utils_MS2_set_up/set_up_paths.R")
 ```
 
 
