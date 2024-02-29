@@ -38,7 +38,12 @@ path_outputs <- "H:/From_SUND/Scripts/outputs"
 
 
 
-### Filename for containing information of standards including absolute path (Please fill in the provided template) as well as the sheet name 🕵
+### Filename for containing information of standards including absolute path (Please fill in the provided template) as well as indicating "T1" or "T2" 🕵
+
+- If each sample includes all the same standards, sheet **T1** is suggested to filled in (at least the red names of columns) and put all filenames in the sheet **T1_Filenames**.
+
+- If each sample includes different standards, sheet **T2** is suggested to filled in (at least the red names of columns)
+
 ```{r eval=FALSE}
 xlsx_std_info <- "H:/From_SUND/Projects/MP163/0220/INFO/LCMS_library_template.xlsx"
 xlsx_std_sheetname <- "compound_table"
