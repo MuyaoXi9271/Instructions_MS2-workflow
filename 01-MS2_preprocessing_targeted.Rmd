@@ -5,7 +5,9 @@ Please copy the template of excel file which fits your data `LCMS_library_templa
 
 
 ## XCMS_check retention time
-Check if the retention time of each standard from MS2 is similar to that from MS1
+- Check if the retention time of each standard from MS2 is similar to that from MS1
+
+- When you check the correctness of retention time, please be aware of the double peaks which one is supposed to be 
 
 The script `2b.Pipeline_XCMS_checkRT.R` is available under the folder of `J:\CBMR\SUN-CBMR-Metabolomics\Workflow\Script\modules\MS2_preprocessing`
 
