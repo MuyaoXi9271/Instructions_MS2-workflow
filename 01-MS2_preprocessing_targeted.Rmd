@@ -138,7 +138,7 @@ colname_rt <- "rt_detected" # or "Library.rt.RF" # or "Library.rt.HILLIC"
 
    
 ### Parameters for extracting MS2 spectra 🕵
-#### Extraction: Threshold of rt and m/z for extraction 🕵
+#### Extraction: Threshold of rt (has to be **second**) and m/z for extraction 🕵
 ```{r eval=FALSE}
 params <- list()
 params$expandRt <- 5 #seconds
