@@ -46,6 +46,8 @@ path_outputs <- "H:/From_SUND/Scripts/outputs"
 
 - If each sample includes different standards, sheet **T2** is suggested to filled in (at least the red names of columns)
 
+- If you notice the retention time need to be corrected and add one more column for containing the corrected retention time (the unit has to be **minute**)
+
 ```{r eval=FALSE}
 xlsx_std_info <- "H:/From_SUND/Projects/MP163/0220/INFO/LCMS_library_template.xlsx"
 xlsx_std_sheetname <- "compound_table"
