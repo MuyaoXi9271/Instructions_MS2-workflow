@@ -146,14 +146,7 @@ params$expandMz <- 0.01
 ```
 
    
-   
-#### How many maximal number of scans you would like to keep for further getting combined spectrum for each std 🕵
-```{r eval=FALSE}
-n_scans <- 6 # (5 CEs * 6/ 1 CE * 3)
-```
-  
-   
-   
+
 #### Combining: Threshold of mz, proportion among all samples, type for combining, function for combining mz and intensity 🕵
 ```{r eval=FALSE}
 #To get consensus spectra for each feature at each collision energy
